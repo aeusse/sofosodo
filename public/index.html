@@ -1,7 +1,82 @@
-<!DOCTYPE html>
 <html>
 
-  <body>
-    Hola mundo
-  </body>
+<head>
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/user_manual.css">
+
+  <script src="js/jquery-3.4.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+  <div class="container-fluid" style="display: block;">
+    <div class="row">
+      <div class="w-100" style="border: solid 2px green; ">
+
+
+        <button onclick="appendLiToRootUl();">Agregar</button>
+        <ul id="root_ul">
+            <li>
+                <span class="tab">root li 0</span>
+                <button class="liButtons" onclick="editLi(0);">Editar título</button>
+                <button class="liButtons" onclick="appendLiToSubUl(0);">Agregar sub-item</button>
+            </li>
+            <ul id="root_li_0"></ul><li>
+                <span class="tab">root li 1</span>
+                <button class="liButtons" onclick="editLi(1);">Editar título</button>
+                <button class="liButtons" onclick="appendLiToSubUl(1);">Agregar sub-item</button>
+            </li>
+            <ul id="root_li_1"><li>
+                <span class="tab">sub li 1</span>
+            </li><li>
+                <span class="tab">sub li 1</span>
+            </li></ul><li>
+                <span class="tab">root li 2</span>
+                <button class="liButtons" onclick="editLi(2);">Editar título</button>
+                <button class="liButtons" onclick="appendLiToSubUl(2);">Agregar sub-item</button>
+            </li>
+            <ul id="root_li_2"><li>
+                <span class="tab">sub li 2</span>
+            </li></ul><li>
+                <span class="tab">root li 3</span>
+                <button class="liButtons" onclick="editLi(3);">Editar título</button>
+                <button class="liButtons" onclick="appendLiToSubUl(3);">Agregar sub-item</button>
+            </li>
+            <ul id="root_li_3"></ul></ul>
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div id="item_edition_title" style="display: none; border: solid 2px rgb(22, 172, 22); ">
+    eee
+  </div>
+  <div id="item_edition_body" class="container-fluid h-100" style="display: none;">
+    <div class="row h-100">
+      <div class="col">
+        One of three columns
+      </div>
+      <div class="col">
+        oe<br>
+
+        <br>
+        <br>
+      </div>
+      <div class="col">
+        One of three columns
+      </div>
+    </div>
+  </div>
+
+</body>
+
+<script src="js/user_manual.js"></script>
+
 </html>
