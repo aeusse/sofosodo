@@ -1,0 +1,37 @@
+
+body {
+    font-size: 25px;
+}
+
+.sub li:before {
+    content: ".";
+}
+
+#item_edition_title {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background-color: rgb(187, 247, 222);
+    text-align: center;
+    z-index: 2;
+}
+
+#item_edition_body {
+    padding-top: 30px;
+}
+
+.col {
+    border: 1px solid;
+}
+
+li{
+    line-height: 50px;
+}
+
+.liButtons{
+    line-height: 0;
+    height: 20px;
+    vertical-align: top;
+    margin-top: 17px;
+}
