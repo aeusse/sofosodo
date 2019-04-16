@@ -1,6 +1,13 @@
 
 body {
-    font-size: 20px;
+    font-size: 18px;
+}
+
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
 }
 
 .sub li:before {
@@ -34,4 +41,27 @@ li{
     height: 20px;
     vertical-align: top;
     margin-top: 17px;
+}
+
+.add_text_or_image_buttons{
+    vertical-align: top;
+    font-size: 13px;
+}
+
+.where_to_show_checks{
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+textarea{
+    min-width: 100%;
+}
+
+.uploadedImageDivs{
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.uploadedImageDivs img {
+    max-width: 100%;
 }
