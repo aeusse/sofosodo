@@ -12,10 +12,17 @@
   },
   "hosting": {
     "public": "public",
+    "rewrites": [{
+      "source": "/api/**",
+      "function": "ep"
+    },{
+      "source": "/funcs/**",
+      "function": "funcs_ep"
+    }],
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "functions/node_modules/**"
     ]
   }
 }
