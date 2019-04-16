@@ -8,7 +8,7 @@ function appendItem(){
         children: []
     }
     $("#root_ul").append(`<li>
-        <span>El título ${curRootLi}</span>
+        <span onclick="editItem([${curRootLi}], 'El título ${curRootLi}');">El título ${curRootLi}</span>
         <button class="liButtons" onclick="editLi(${curRootLi});">Editar título</button>
         <button class="liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
         <ul id="sub_ul_${curRootLi}"></ul>

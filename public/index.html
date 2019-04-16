@@ -19,7 +19,7 @@
 
         <button onclick="appendItem();">Agregar</button>
         <ul id="root_ul"></ul>
-            
+
 
 
       </div>
@@ -29,28 +29,63 @@
 
 
 
-  <div id="item_edition_title" style="display: none; border: solid 2px rgb(22, 172, 22); ">
-    eee
-  </div>
+  <div id="item_edition_title" style="display: none; border: solid 2px rgb(22, 172, 22); "></div>
   <div id="item_edition_body" class="container-fluid h-100" style="display: none;">
     <div class="row h-100">
       <div class="col">
-        One of three columns
+        Vista de usuario final
+        <br>
       </div>
       <div class="col">
-        oe<br>
+        Vista interna
+        <br>
+        <button onclick="addParagraph(0);">Agregar texto</button>
+        <br>
+        <button onclick="addImage(0);">Agregar imagen</button>
+
 
         <br>
         <br>
-      </div>
-      <div class="col">
-        One of three columns
+        <input type="radio" name="type_0" value="dev"> Interno<br>
+        <input type="radio" name="type_0" value="final"> Usuario final<br>
+        <textarea id="content_0"></textarea>
+        <br>
+        <br>
+        <button onclick="addParagraph(1);">Agregar texto</button>
+        <br>
+        <button onclick="addImage(1);">Agregar imagen</button>
+
+
+        <br>
+        <br>
+        <input type="radio" name="type_1" value="dev"> Interno<br>
+        <input type="radio" name="type_1" value="final"> Usuario final<br>
+        id="content_1" Imagen
+        <br>
+        <br>
+        <button onclick="addParagraph(2);">Agregar texto</button>
+        <br>
+        <button onclick="addImage(2);">Agregar imagen</button>
+
+
+        <br>
+        <br>
+        <input type="radio" name="type_2" value="dev"> Interno<br>
+        <input type="radio" name="type_2" value="final"> Usuario final<br>
+        <textarea id="content_2"></textarea>
+        <br>
+        <br>
+        <button onclick="addParagraph(3);">Agregar texto</button>
+        <br>
+        <button onclick="addImage(3);">Agregar imagen</button>
+
       </div>
     </div>
   </div>
 
 </body>
 
-<script src="js/user_manual.js"></script>
+<script src="js/user_manual/tree.js"></script>
+<script src="js/user_manual/item_edition.js"></script>
 
 </html>
