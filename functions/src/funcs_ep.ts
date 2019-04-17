@@ -1,5 +1,7 @@
 import * as functions from 'firebase-functions'
 
+import * as userManualFuncs from './user_manual'
+
 //-
 //- Setups
 //-
@@ -30,7 +32,7 @@ module.exports = functions.https.onCall(async (data, context) => {
 	}
 	//- Métodos expuestos
 	const fnResult = await fn(session, data)
-	if (fnResult.success === false){
+	if (fnResult.success === false) {
 		console.log("fnResult Error -> La función fue:", receivedFn)
 		console.log("fnResult Error -> El data en el request fue:", JSON.stringify(data))
 		console.log("fnResult Error -> La sesión fue:", JSON.stringify(session))
@@ -42,14 +44,17 @@ module.exports = functions.https.onCall(async (data, context) => {
 //-
 //- Métodos expuestos
 //-
-nativeFuncs.save_user_manual = (async (session:any, data:any) => {
+nativeFuncs.get_current_user_manual = (async (session: any) => {
 
-    console.log(data)
-    
-    return {
-        success: false,
-        code: "CODIGO_DE_PRUEBA",
-        msg: "Mensaje de error de prueba"
-    }
+	return await userManualFuncs.getCurrent()
+
+})
+
+nativeFuncs.save_user_manual = (async (session: any, data: any) => {
+
+	//console.log(data)
+	const result = await userManualFuncs.save(data.tree, data.initial_tree)
+
+	return result
 
 })
