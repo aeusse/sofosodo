@@ -60,9 +60,9 @@ function appendSubItem(parentPath){
 
 async function save(){
     $("button").attr("disabled", true);
-    const save = firebase.functions().httpsCallable('save_user_manual');
     try {
-        const result = await save({initial_tree: {}, tree: tree});
+        const save = firebase.functions().httpsCallable('save_user_manual');
+        const result = await save({initial_tree: localStorage.getItem("initial_tree"), tree: localStorage.getItem("tree")});
         if (result.data.success === true){
             console.log("Guardado!!!");
         }else{
@@ -75,3 +75,28 @@ async function save(){
         $("button").attr("disabled", false);
     }
 }
+
+function start(currentSavedManual){
+    if (localStorage.getItem("tree") !== null && localStorage.getItem("tree") !== currentSavedManual){
+        console.log("Rutina de rescate!!!!!")
+    }else{
+        localStorage.setItem("initial_tree", currentSavedManual);
+    }
+
+}
+
+$(async function() {
+    console.log( "ready!" );
+    try {
+        const getCurrent = firebase.functions().httpsCallable('get_current_user_manual');
+        const result = await getCurrent();
+        if (result.data.success === true){
+            start(result.data.currentManual);
+        }else{
+            alert(result.data.msg);
+        }
+    } catch (error) {
+        console.log(error);
+        alert("No se pudo iniciar!!");
+    }
+});
