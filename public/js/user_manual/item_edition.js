@@ -111,7 +111,8 @@ function saveToLocalStorage(path){
     const target = o[closerParentIdx];
 
     target.data = data;
-    localStorage.setItem(tree, JSON.stringify(tree));
+    localStorage.setItem("tree", JSON.stringify(tree));
+    localStorage.setItem("need_to_save", "true");
 }
 
 //saveToLocalStorage([3, 1, 2])

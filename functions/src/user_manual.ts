@@ -8,7 +8,7 @@ export async function getCurrent() {
         const softwareInfo = (await db.collection("/softwares").doc("qanty").get()).data()
         let currentManual:string
         if (softwareInfo){
-            currentManual = softwareInfo.currentManual
+            currentManual = softwareInfo.currentManual || JSON.stringify({})
         }else{
             currentManual = JSON.stringify({})
         }
@@ -27,14 +27,14 @@ export async function getCurrent() {
     }
 }
 
-export async function save(treeToSave:any, initialTree:any) {
+export async function save(treeToSave:any, checkpointTree:any) {
     try {
         const transResult = await db.runTransaction(async transaction => {
             const docRef = db.collection("/softwares").doc("qanty")
             const softwareInfo = (await transaction.get(docRef)).data()
 
-            if (softwareInfo){
-                if (softwareInfo.currentManual !== initialTree){
+            if (softwareInfo && softwareInfo.currentManual !== undefined){
+                if (softwareInfo.currentManual !== checkpointTree){
                     return{
                         success: false,
                         code: "INTEGRITY_CHECK_WARNING",

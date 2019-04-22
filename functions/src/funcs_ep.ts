@@ -53,7 +53,7 @@ nativeFuncs.get_current_user_manual = (async (session: any) => {
 nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 
 	//console.log(data)
-	const result = await userManualFuncs.save(data.tree, data.initial_tree)
+	const result = await userManualFuncs.save(data.tree, data.checkpoint_tree)
 
 	return result
 
