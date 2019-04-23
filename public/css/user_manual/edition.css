@@ -63,5 +63,17 @@ textarea{
     margin-right: auto;
 }
 .uploadedImageDivs img {
+    display: block;
     max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.type_indicator_title{
+    font-size: 13px;
+    float: right;
+}
+
+.finalViewParagraph{
+    text-align: justify;
 }
