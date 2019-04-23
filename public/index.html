@@ -11,7 +11,7 @@
   <script src="/__/firebase/init.js"></script>
 
   <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/user_manual.css">
+  <link rel="stylesheet" href="css/user_manual/edition.css">
 
   <script src="js/jquery-3.4.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
@@ -39,13 +39,15 @@
   <div id="item_edition_body" class="container-fluid h-100" style="display: none;">
     <div class="row h-100">
 
-      <div id="final_user_viewer" class="col">
-        Vista de usuario final
+      <div class="col">
+        <label class="type_indicator_title">Vista de usuario final</label>
         <br>
+        <div id="final_user_viewer" class="col">
+        </div>
       </div>
 
       <div id="developer_edition_zone" class="col">
-        Vista interna
+        <label class="type_indicator_title">Vista interna + edición</label>
         <br>
         <button class="add_text_or_image_buttons" onclick="addParagraph(0);">Texto</button>
         <button class="add_text_or_image_buttons" onclick="addImage(0);">Imagen</button>
