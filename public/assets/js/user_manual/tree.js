@@ -17,7 +17,7 @@ function appendItem(){
         children: []
     }
     $("#root_ul").append(`<li>
-        <span id="li_title_${curRootLi}" onclick="editItem([${curRootLi}]);">${titleTxt}</span>
+        <span id="li_title_${curRootLi}" onclick="editItem([${curRootLi}]);"><b>${curRootLi+1} &nbsp;&nbsp; ${titleTxt}</b></span>
         <button class="liButtons" onclick="editLi([${curRootLi}]);">Editar título</button>
         <button class="liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
         <ul id="sub_ul_${curRootLi}"></ul>
@@ -88,6 +88,10 @@ async function save(){
             success: false
         }
     }
+}
+
+function preview(){
+    window.open('preview.html', '_blank');
 }
 
 $(async function() {

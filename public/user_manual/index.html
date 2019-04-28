@@ -1,0 +1,71 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <script src="/__/firebase/5.9.4/firebase-app.js"></script>
+  <script src="/__/firebase/5.9.4/firebase-firestore.js"></script>
+  <script src="/__/firebase/5.9.4/firebase-functions.js"></script>
+  <script src="/__/firebase/5.9.4/firebase-auth.js"></script>
+  <script src="/__/firebase/5.9.4/firebase-storage.js"></script>
+  <script src="/__/firebase/init.js"></script>
+
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/css/user_manual/edition.css">
+
+  <script src="/assets/js/jquery-3.4.0.min.js"></script>
+  <script src="/assets/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+  <!-- Árbol Principal -->
+  <div id="tree_container" class="container-fluid" style="display: block;">
+    <div class="row">
+      <div class="w-100" style="border: solid 2px green; ">
+
+        <button class="alignleft" onclick="appendItem();">Agregar</button>
+        <button class="alignright" onclick="preview();">Previsualización</button>
+        <button class="alignright" onclick="save();">Guardar</button>
+        <div style="clear: both;">
+          <ul id="root_ul"></ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Edición de un elemento -->
+  <div id="item_edition_title" style="display: none; border: solid 2px rgb(22, 172, 22); "></div>
+  <div id="item_edition_body" class="container-fluid h-100" style="display: none;">
+    <div class="row h-100">
+
+      <div class="col">
+        <label class="type_indicator_title">Vista de usuario final</label>
+        <br>
+        <div id="final_user_viewer" class="col">
+        </div>
+      </div>
+
+      <div id="developer_edition_zone" class="col">
+        <label class="type_indicator_title">Vista interna + edición</label>
+        <br>
+        <button class="add_text_or_image_buttons" onclick="addParagraph(0);">Texto</button>
+        <button class="add_text_or_image_buttons" onclick="addImage(0);">Imagen</button>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+<script>
+  let tree = JSON.parse(localStorage.getItem("tree"));
+  //let tree = JSON.parse('[{"title":"El título 0","children":[]},{"title":"El título 1","children":[]},{"title":"El título 2","children":[]},{"title":"El título 3","children":[{"title":"El subtítulo _3 0","children":[]},{"title":"El subtítulo _3 1","children":[{"title":"El subtítulo _3_1 0","children":[]},{"title":"El subtítulo _3_1 1","children":[]},{"title":"El subtítulo _3_1 2","children":[]},{"title":"El subtítulo _3_1 3","children":[]},{"title":"El subtítulo _3_1 4","children":[]}]}]}]');
+  //let tree = JSON.parse('[{"title":"El título 0","children":[]},{"title":"El título 1","children":[]},{"title":"El título 2","children":[]},{"title":"El título 3","children":[{"title":"El subtítulo _3 0","children":[]},{"title":"El subtítulo _3 1","children":[{"title":"El subtítulo _3_1 0","children":[]},{"title":"El subtítulo _3_1 1","children":[]},{"title":"El subtítulo _3_1 2","children":[],"data":{"0":{"type":"text","text":"dfhg","finalUser":true},"1":{"type":"image","url":"https://firebasestorage.googleapis.com/v0/b/sofosodo-dev.appspot.com/o/images%2FWhatsApp%20Image%202019-04-09%20at%2018.04.58.jpeg?alt=media&token=36459b0c-3840-4049-8b4e-f26a1f7303d1","finalUser":false},"2":{"type":"text","text":"Otro párrafo más ","finalUser":true},"3":{"type":"image","url":"https://firebasestorage.googleapis.com/v0/b/sofosodo-dev.appspot.com/o/images%2FWhatsApp%20Image%202018-07-30%20at%2012.08.24.jpeg?alt=media&token=3e1520ca-e335-40d7-b0bf-ba0c0982e916","finalUser":false},"4":{"type":"image","finalUser":false}}},{"title":"El subtítulo _3_1 3","children":[]},{"title":"El subtítulo _3_1 4","children":[]}]}]}]');
+</script>
+<script src="/assets/js/user_manual/first_draw.js"></script>
+<script src="/assets/js/user_manual/tree.js"></script>
+<script src="/assets/js/user_manual/item_edition.js"></script>
+
+</html>
