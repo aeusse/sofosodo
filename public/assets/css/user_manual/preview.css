@@ -1,0 +1,111 @@
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 6mm;
+}
+
+a {
+  text-decoration: none;
+}
+
+.page-break {
+  page-break-after: always;
+  page-break-inside: avoid;
+  clear:both;
+}
+.page-break-before {
+  page-break-before: always;
+  page-break-inside: avoid;
+  clear:both;
+}
+#html-2-pdfwrapper{
+  position: absolute; 
+  left: 20px; 
+  top: 50px; 
+  bottom: 0; 
+  overflow: auto; 
+  width: 600px;
+}
+
+page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+page[size="A4"] {  
+  width: 21cm;
+  height: 29.7cm; 
+}
+
+#loading_div{
+  position: fixed;
+  width: 100%;
+  margin-top: 30%;
+}
+
+#titulo_del_prefacio{
+  font-size: 8mm;
+  margin: 15mm 15mm 0mm 15mm;
+  font-weight: bold;
+}
+#contenido_del_prefacio {
+  text-align: justify;
+  margin: 15mm;
+}
+
+#index_title{
+  font-size: 8mm;
+  margin: 15mm 15mm 0mm 15mm;
+  font-weight: bold;
+}
+.index_item {
+  text-align: justify;
+  margin-left: 15mm;
+}
+
+h2 {
+  padding: 30mm 25mm 5mm 25mm;
+}
+p {
+  padding: 5mm 20mm;
+  text-align: justify;
+}
+
+#big_bar{
+  margin: 5% 5%;
+  height: 20mm;
+  width: 90%;
+  background-color: blue;
+}
+#manual_title{
+  font-size: 32mm;
+  float: right;
+  margin-right: 15mm;
+  margin-bottom: 8mm;
+}
+#manual_title_description{
+  font-size: 9mm;
+  float: right;
+  margin-right: 15mm;
+}
+#manual_title_title{
+  font-size: 16mm;
+  margin-left: 15mm;
+  margin-top: 190mm;
+}
+
+.imageDivs{
+  width: 500px;
+  height: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
