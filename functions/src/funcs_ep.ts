@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions'
 
 import * as userManualFuncs from './user_manual'
+import * as dbMapperFuncs from './db_mapper'
 
 //-
 //- Setups
@@ -54,6 +55,15 @@ nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 
 	//console.log(data)
 	const result = await userManualFuncs.save(data.tree, data.checkpoint_tree)
+
+	return result
+
+})
+
+nativeFuncs.get_full_db_map = (async (session: any) => {
+
+	//console.log(data)
+	const result = await dbMapperFuncs.getFullMap()
 
 	return result
 
