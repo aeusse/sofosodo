@@ -90,6 +90,7 @@ public/dist/.DS_Store
 serviceAccountKey.json
 serviceAccountKey-lab.json
 serviceAccountKey-prod.json
+qanty-cert.json
 # Variables de entorno de firebase
 .runtimeconfig.json
 

@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin'
 export async function getFullMap() {
     try {
 
-        const qantyCredentials = require('../qanty-firebase-adminsdk-xdnss.json');
+        const qantyCredentials = require('../qanty-cert.json');
         const qantyAppConfig = {
             credential: admin.credential.cert(qantyCredentials),
             databaseURL: "https://qanty-dev.firebaseio.com"
