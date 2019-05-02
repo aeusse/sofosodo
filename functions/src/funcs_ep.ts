@@ -10,7 +10,7 @@ const withoutSession = [
 	"save_user_manual"
 ]
 const nativeFuncs = <any>{}
-module.exports = functions.https.onCall(async (data, context) => {
+module.exports = functions.runWith({ memory: '2GB', timeoutSeconds: 540 }).https.onCall(async (data, context) => {
 	const receivedFn = context.rawRequest.url.split('/')[2]
 	const fn = nativeFuncs[receivedFn]
 	if (typeof fn !== "function") {

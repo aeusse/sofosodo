@@ -25,7 +25,11 @@ export async function getFullMap() {
                 console.log(algo[i].data())
             }
         }*/
-        const ignoredPaths = ["branches",
+        
+
+        
+        const ignoredPaths = [
+            "branches",
             "companyMainMaps",
             "customInfo",
             "devices",
@@ -36,44 +40,24 @@ export async function getFullMap() {
             "screens",
             "slots",
             "spots",
-            "statEvents"
+            "statEvents",
+            "companies/57b2ORKV0Rw1u9Glnowh/tactiles",
+            "companies/57b2ORKV0Rw1u9Glnowh/touchScreenTemplates"
         ]
-
-        const allowedToReadAllDocs = ["companies",
-            "customerDocTypes",
-
-
-            "sessions"
-
-
+        const allowedToReadAllDocs = [
+            "roles",
+            "sessions",
+            "users",
+            "branches",
+            "lines",
+            "printers",
+            "screens",
+            "slots"
         ]
-
-        let result:any = {}
-
         const collections = await qantyDb.getCollections()
-        for (const c of collections){
-            if (ignoredPaths.indexOf(c.path) === -1){
-                //console.log(c.id)
-                if (c.id !== "sessions"){
-                    continue
-                }
-                //console.log(c.path)
-                result[c.id] = {}
-                const docs = (await qantyDb.collection(c.path).get()).docs
-                if (allowedToReadAllDocs.indexOf(c.id) > -1){
-                    console.log(c.id, "leyendo todos los documentos")
-                    for (const doc of docs){
-                        const data = doc.data()
-                        processData(result, c, data)
-                    }
-                }else{
-                    console.log(c.id, "leyendo solo el primer documento")
-                    const data = docs[0].data()
-                    processData(result, c, data)
-                }
-                //break
-            }
-        }
+        
+        let result:any = {}
+        await processCollections(qantyDb, collections, result, ignoredPaths, allowedToReadAllDocs)
 
         console.log("====")
         console.log("====")
@@ -93,6 +77,49 @@ export async function getFullMap() {
             msg: "Error interno"
         }
     }
+}
+
+async function processCollections(qantyDb:any, collections:any, result:any, ignoredPaths:any, allowedToReadAllDocs:any){
+    
+    
+    for (const c of collections){
+        console.log("path:", c.path)
+        if (ignoredPaths.indexOf(c.path) === -1){
+            /*if (c.id !== "companies"){
+                continue
+            }*/
+            result[c.id] = {}
+            const docs = (await qantyDb.collection(c.path).get()).docs
+            if (allowedToReadAllDocs.indexOf(c.id) > -1){
+                for (const doc of docs){
+                    const data = doc.data()
+                    processData(result, c, data)
+                    const subCollections = await doc.ref.getCollections()
+                    await processCollections(qantyDb, subCollections, result, ignoredPaths, allowedToReadAllDocs)
+                }
+            }else{
+                const data = docs[0].data()
+                processData(result, c, data)
+                const subCollections = await docs[0].ref.getCollections()
+                await processCollections(qantyDb, subCollections, result, ignoredPaths, allowedToReadAllDocs)
+            }
+
+
+
+
+            
+            
+
+
+
+
+
+        }else{
+            console.log("no señor")
+        }
+    }
+
+    return result
 }
 
 function processData(result:any, c:any, data:any){
