@@ -104,16 +104,6 @@ async function processCollections(qantyDb:any, collections:any, result:any, igno
                 await processCollections(qantyDb, subCollections, result, ignoredPaths, allowedToReadAllDocs)
             }
 
-
-
-
-            
-            
-
-
-
-
-
         }else{
             console.log("no señor")
         }
