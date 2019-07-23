@@ -19,21 +19,36 @@
 
 <body>
 
-  <div>
-    <h1 style="text-align: center; margin: 2%;">
-      Mapeador
-    </h1>
+  <div class="container-fluid">
+    <div>
+      <h1 style="text-align: center; margin: 2%;">
+        Mapeador
+      </h1>
+    </div>
   </div>
-  <div style="text-align:center;">
-    <button onclick="getFullDbMap();">Vamos a por ello tío!</button>
-    <br>
-    <br>
-    
+  <div class="container-fluid">
+    <div class="row">
+      <div id="walker" class="col-12">
+        <button type="button" class="btn btn-secondary" onclick="getFullDbMap();">Recorrer</button>
+        <br>
+        <br>
+        <div id="walker_result"></div>
+      </div>
+      <div id="editor" class="col-6 d-none">
+        <!-- La idea de guardar es ahorrarse lecturas y tener un poquito más de velocidad, 
+          así como poder ver diferencias.
+          TO DO!!
+        -->
+        <button type="button" class="btn btn-warning" onclick="console.log('OEOEOEOE');">Guardar!</button>
+        <br>
+        <br>
+      </div>
+    </div>
   </div>
-  
+
 </body>
 
+<script src="/assets/js/db_mapper/renderjson.js"></script>
 <script src="/assets/js/db_mapper/get.js"></script>
-
 
 </html>
