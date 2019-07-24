@@ -38,9 +38,9 @@ export async function getFullMap() {
             "screens",
             "slots"
         ]
-        const collections = await qantyDb.getCollections()
+        const collections = await qantyDb.listCollections()
 
-        let result: any = {}
+        const result: any = {}
         await processCollections(qantyDb, collections, result, ignoredPaths, allowedToReadAllDocs)
 
         return {
