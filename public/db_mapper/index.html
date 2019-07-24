@@ -28,21 +28,24 @@
   </div>
   <div class="container-fluid">
     <div class="row">
-      <div id="walker" class="col-12">
+      <div class="col-10">
         <button type="button" class="btn btn-secondary" onclick="getFullDbMap();">Recorrer</button>
         <br>
         <br>
-        <div id="walker_result"></div>
       </div>
-      <div id="editor" class="col-6 d-none">
+      <div class="col-1">
         <!-- La idea de guardar es ahorrarse lecturas y tener un poquito más de velocidad, 
-          así como poder ver diferencias.
+          así como poder ver diferencias, y hacer ediciones rápidas.
           TO DO!!
         -->
         <button type="button" class="btn btn-warning" onclick="console.log('OEOEOEOE');">Guardar!</button>
         <br>
         <br>
       </div>
+    </div>
+    <div class="row">
+      <div id="walker_result" class="col-6"></div>
+      <div id="last_saved" class="col-6"></div>
     </div>
   </div>
 
