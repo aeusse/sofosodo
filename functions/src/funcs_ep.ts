@@ -53,7 +53,6 @@ nativeFuncs.get_current_user_manual = (async (session: any) => {
 
 nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 
-	//console.log(data)
 	const result = await userManualFuncs.save(data.tree, data.checkpoint_tree)
 
 	return result
@@ -62,8 +61,35 @@ nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 
 nativeFuncs.get_full_db_map = (async (session: any) => {
 
-	//console.log(data)
 	const result = await dbMapperFuncs.getFullMap()
+
+	return result
+
+})
+
+nativeFuncs.save_full_db_map = (async (session: any, data: any) => {
+
+	if (data === null || data.dict === undefined){
+		return {
+			success: false,
+			msg: "Me estás cargando ché boludo!!"
+		}
+	}
+	if (Object.keys(data.dict).length === 0 && data.dict.constructor === Object){
+		return {
+			success: false,
+			msg: "Ese objeto está vacío papito!"
+		}
+	}
+	const result = await dbMapperFuncs.saveFullMap(data.dict)
+
+	return result
+
+})
+
+nativeFuncs.get_current_saved_db_map = (async (session: any) => {
+
+	const result = await dbMapperFuncs.getCurrentSavedDBMap()
 
 	return result
 

@@ -15,33 +15,60 @@
   <script src="/assets/js/jquery-3.4.0.min.js"></script>
   <script src="/assets/js/bootstrap.min.js"></script>
 
+  <style>
+    button {
+      min-width: 14em;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 2%;
+    }
+
+    #loading_div {
+      position: fixed;
+      margin-top: 30%;
+      width: 20em;
+      left: 50%;
+      margin-left: -5em;
+    }
+  </style>
+
 </head>
 
 <body>
-
+  <div id="loading_div">
+    <img src="/assets/img/loading.gif">
+  </div>
   <div class="container-fluid">
     <div>
-      <h1 style="text-align: center; margin: 2%;">
+      <h1>
         Mapeador
       </h1>
     </div>
   </div>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-10">
-        <button type="button" class="btn btn-secondary" onclick="getFullDbMap();">Recorrer</button>
+      <div class="col-8">
+        <button id="get_full_db_map_button" type="button" class="btn btn-secondary"
+          onclick="getFullDbMap();">Recorrer</button>
         <br>
         <br>
       </div>
-      <div class="col-1">
+      <div class="col-4">
         <!-- La idea de guardar es ahorrarse lecturas y tener un poquito más de velocidad, 
           así como poder ver diferencias, y hacer ediciones rápidas.
           TO DO!!
         -->
-        <button type="button" class="btn btn-warning" onclick="console.log('OEOEOEOE');">Guardar!</button>
+        <button type="button" class="btn btn-warning" onclick="saveFullDbMap();" disabled>Guardar el resultado recién
+          obtenido!</button>
         <br>
         <br>
       </div>
+    </div>
+    <div class="row">
+      <div class="col-6">Resultado recién obtenido desde la DB</div>
+      <div class="col-6">Último recorrido guardado</div>
     </div>
     <div class="row">
       <div id="walker_result" class="col-6"></div>
