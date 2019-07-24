@@ -90,15 +90,19 @@ async function processCollections(qantyDb:any, collections:any, result:any, igno
     const ps2 = []   //- Un segundo recolector de promesas
     for (const idx in rs){
         const docs = rs[idx].docs
-        result[cs[idx].id] = {}
-        console.log("path:", cs[idx].path)
+        if (typeof result[cs[idx].id] === "undefined") {
+            result[cs[idx].id] = {}
+        }
+        //console.log("path:", cs[idx].path)
         for (const doc of docs){
             try {
                 const data = doc.data()
                 processData(result, cs[idx], data)
                 const subCollections = await doc.ref.getCollections()
                 if (subCollections.length > 0){
-                    result[cs[idx].id]["subcollections"] = {}
+                    if (typeof result[cs[idx].id]["subcollections"] === "undefined") {
+                        result[cs[idx].id]["subcollections"] = {}
+                    }
                     ps2.push(processCollections(qantyDb, subCollections, result[cs[idx].id]["subcollections"], ignoredPaths, allowedToReadAllDocs))
                 }
             } catch (error) {
@@ -111,11 +115,15 @@ async function processCollections(qantyDb:any, collections:any, result:any, igno
 }
 
 function processData(result:any, c:any, data:any){
-    result[c.id]["fields"] = {}
+    if (typeof result[c.id]["fields"] === "undefined") {
+        result[c.id]["fields"] = {}
+    }
     const thisResultFields = result[c.id]["fields"]
     for (const key in data){
         if (typeof(data[key]) === "object"){
-            thisResultFields[key] = {}
+            if (typeof thisResultFields[key] === "undefined") {
+                thisResultFields[key] = {}
+            }
             walkThroughSingleObject(thisResultFields[key], data[key])
         }else{
             thisResultFields[key] = typeof(data[key])
@@ -126,7 +134,9 @@ function processData(result:any, c:any, data:any){
 function walkThroughSingleObject(target:any, field:any){
     for (const subKey in field){
         if (typeof (field[subKey]) === "object") {
-            target[subKey] = {}
+            if (typeof target[subKey] === "undefined") {
+                target[subKey] = {}
+            }
             walkThroughSingleObject(target[subKey], field[subKey]);
         }else{
             target[subKey] = typeof(field[subKey])
