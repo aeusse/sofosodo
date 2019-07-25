@@ -1,17 +1,16 @@
 import * as admin from 'firebase-admin'
 const db = admin.firestore()
 
+const qantyCredentials = require('../qanty-cert.json');
+const qantyAppConfig = {
+    credential: admin.credential.cert(qantyCredentials),
+    databaseURL: "https://qanty-dev.firebaseio.com"
+}
+const adminQanty = admin.initializeApp(qantyAppConfig, "qanty")
+const qantyDb = adminQanty.firestore()
+
 export async function getFullMap() {
     try {
-
-        const qantyCredentials = require('../qanty-cert.json');
-        const qantyAppConfig = {
-            credential: admin.credential.cert(qantyCredentials),
-            databaseURL: "https://qanty-dev.firebaseio.com"
-        }
-        const adminQanty = admin.initializeApp(qantyAppConfig, "qanty")
-        const qantyDb = adminQanty.firestore()
-
         const ignoredPaths = [  //- Estos son paths absolutos empezando desde la propia /
             "branches",
             "companyMainMaps",
@@ -41,7 +40,7 @@ export async function getFullMap() {
         const collections = await qantyDb.listCollections()
 
         const result: any = {}
-        await processCollections(qantyDb, collections, result, ignoredPaths, allowedToReadAllDocs)
+        await processCollections(collections, result, ignoredPaths, allowedToReadAllDocs)
 
         return {
             success: true,
@@ -58,7 +57,7 @@ export async function getFullMap() {
     }
 }
 
-async function processCollections(qantyDb: any, collections: any, result: any, ignoredPaths: any, allowedToReadAllDocs: any) {
+async function processCollections(collections: any, result: any, ignoredPaths: any, allowedToReadAllDocs: any) {
 
     const ps = []   //- Recolector de promesas
     const cs = []   //- Recolector de colecciones sincronizado con ps
@@ -88,12 +87,12 @@ async function processCollections(qantyDb: any, collections: any, result: any, i
             try {
                 const data = doc.data()
                 processData(result, cs[idx], data)
-                const subCollections = await doc.ref.getCollections()
+                const subCollections = await doc.ref.listCollections()
                 if (subCollections.length > 0) {
                     if (typeof result[cs[idx].id]["subcollections"] === "undefined") {
                         result[cs[idx].id]["subcollections"] = {}
                     }
-                    ps2.push(processCollections(qantyDb, subCollections, result[cs[idx].id]["subcollections"], ignoredPaths, allowedToReadAllDocs))
+                    ps2.push(processCollections(subCollections, result[cs[idx].id]["subcollections"], ignoredPaths, allowedToReadAllDocs))
                 }
             } catch (error) {
                 console.log("Qué raro!!!!!!!!!!!!")
