@@ -1,11 +1,10 @@
 import * as admin from 'firebase-admin'
-
-//const db = admin.firestore()
+const db = admin.firestore()
 
 export async function getFullMap() {
     try {
 
-        const qantyCredentials = require('../qanty-firebase-adminsdk-xdnss.json');
+        const qantyCredentials = require('../qanty-cert.json');
         const qantyAppConfig = {
             credential: admin.credential.cert(qantyCredentials),
             databaseURL: "https://qanty-dev.firebaseio.com"
@@ -13,19 +12,8 @@ export async function getFullMap() {
         const adminQanty = admin.initializeApp(qantyAppConfig, "qanty")
         const qantyDb = adminQanty.firestore()
 
-
-
-
-        /*const companyData = (await qantyDb.collection("/companies").doc("57b2ORKV0Rw1u9Glnowh").get()).data()
-        console.log(companyData)
-        const companyCollections = (await qantyDb.collection("/companies").doc("57b2ORKV0Rw1u9Glnowh").getCollections())
-        for (const collection in companyCollections){
-            const algo = (await companyCollections[collection].get()).docs
-            for (const i in algo){
-                console.log(algo[i].data())
-            }
-        }*/
-        const ignoredPaths = ["branches",
+        const ignoredPaths = [  //- Estos son paths absolutos empezando desde la propia /
+            "branches",
             "companyMainMaps",
             "customInfo",
             "devices",
@@ -36,53 +24,28 @@ export async function getFullMap() {
             "screens",
             "slots",
             "spots",
-            "statEvents"
+            "statEvents",
+            "companies/57b2ORKV0Rw1u9Glnowh/tactiles",
+            "companies/57b2ORKV0Rw1u9Glnowh/touchScreenTemplates"
         ]
-
-        const allowedToReadAllDocs = ["companies",
-            "customerDocTypes",
-
-
-            "sessions"
-
-
+        const allowedToReadAllDocs = [  //- Estos son solo el nombrecito de la colección
+            "roles",
+            //"sessions",
+            //"users",
+            "branches",
+            "lines",
+            "printers",
+            "screens",
+            "slots"
         ]
+        const collections = await qantyDb.listCollections()
 
-        let result:any = {}
+        const result: any = {}
+        await processCollections(qantyDb, collections, result, ignoredPaths, allowedToReadAllDocs)
 
-        const collections = await qantyDb.getCollections()
-        for (const c of collections){
-            if (ignoredPaths.indexOf(c.path) === -1){
-                //console.log(c.id)
-                if (c.id !== "sessions"){
-                    continue
-                }
-                //console.log(c.path)
-                result[c.id] = {}
-                const docs = (await qantyDb.collection(c.path).get()).docs
-                if (allowedToReadAllDocs.indexOf(c.id) > -1){
-                    console.log(c.id, "leyendo todos los documentos")
-                    for (const doc of docs){
-                        const data = doc.data()
-                        processData(result, c, data)
-                    }
-                }else{
-                    console.log(c.id, "leyendo solo el primer documento")
-                    const data = docs[0].data()
-                    processData(result, c, data)
-                }
-                //break
-            }
-        }
-
-        console.log("====")
-        console.log("====")
-        console.log(result)
-        console.log(JSON.stringify(result))
-
-
-        return{
-            success: true
+        return {
+            success: true,
+            dict: result
         }
 
     } catch (error) {
@@ -95,24 +58,116 @@ export async function getFullMap() {
     }
 }
 
-function processData(result:any, c:any, data:any){
-    for (const key in data){
-        if (typeof(data[key]) === "object"){
-            result[c.id][key] = {}
-            walkThroughSingleObject(result[c.id][key], data[key])
-        }else{
-            result[c.id][key] = typeof(data[key])
+async function processCollections(qantyDb: any, collections: any, result: any, ignoredPaths: any, allowedToReadAllDocs: any) {
+
+    const ps = []   //- Recolector de promesas
+    const cs = []   //- Recolector de colecciones sincronizado con ps
+    for (const c of collections) {
+        //console.log("path:", c.path)
+        if (ignoredPaths.indexOf(c.path) === -1) {
+            /*if (c.id !== "companies" && c.id !== "branches"){
+                continue
+            }*/
+            if (allowedToReadAllDocs.indexOf(c.id) === -1) {
+                ps.push(qantyDb.collection(c.path).limit(1).get())
+            } else {
+                ps.push(qantyDb.collection(c.path).get())
+            }
+            cs.push(c)
+        }
+    }
+    const rs = await Promise.all(ps)
+    const ps2 = []   //- Un segundo recolector de promesas
+    for (const idx in rs) {
+        const docs = rs[idx].docs
+        if (typeof result[cs[idx].id] === "undefined") {
+            result[cs[idx].id] = {}
+        }
+        //console.log("path:", cs[idx].path)
+        for (const doc of docs) {
+            try {
+                const data = doc.data()
+                processData(result, cs[idx], data)
+                const subCollections = await doc.ref.getCollections()
+                if (subCollections.length > 0) {
+                    if (typeof result[cs[idx].id]["subcollections"] === "undefined") {
+                        result[cs[idx].id]["subcollections"] = {}
+                    }
+                    ps2.push(processCollections(qantyDb, subCollections, result[cs[idx].id]["subcollections"], ignoredPaths, allowedToReadAllDocs))
+                }
+            } catch (error) {
+                console.log("Qué raro!!!!!!!!!!!!")
+            }
+        }
+    }
+    await Promise.all(ps2)
+    return result
+}
+
+function processData(result: any, c: any, data: any) {
+    if (typeof result[c.id]["fields"] === "undefined") {
+        result[c.id]["fields"] = {}
+    }
+    const thisResultFields = result[c.id]["fields"]
+    for (const key in data) {
+        if (typeof (data[key]) === "object") {
+            if (typeof thisResultFields[key] === "undefined") {
+                thisResultFields[key] = {}
+            }
+            walkThroughSingleObject(thisResultFields[key], data[key])
+        } else {
+            thisResultFields[key] = typeof (data[key])
         }
     }
 }
 
-function walkThroughSingleObject(target:any, field:any){
-    for (const subKey in field){
+function walkThroughSingleObject(target: any, field: any) {
+    for (const subKey in field) {
         if (typeof (field[subKey]) === "object") {
-            target[subKey] = {}
+            if (typeof target[subKey] === "undefined") {
+                target[subKey] = {}
+            }
             walkThroughSingleObject(target[subKey], field[subKey]);
-        }else{
-            target[subKey] = typeof(field[subKey])
+        } else {
+            target[subKey] = typeof (field[subKey])
+        }
+    }
+}
+
+export async function saveFullMap(dict: any) {
+    try {
+        await db.collection("softwares").doc("qanty").set({ currentDBMap: dict }, { merge: true })
+        return { success: true }
+    } catch (error) {
+        console.error("Error db_mapper saveFullMap: " + error.stack)
+        return {
+            success: false,
+            code: "SAVE_FULL_MAP_INTERNAL_ERROR",
+            msg: "Error interno"
+        }
+    }
+}
+
+export async function getCurrentSavedDBMap() {
+    try {
+        const query = (await db.collection("softwares").doc("qanty").get()).data()
+        if (query) {
+            return {
+                success: true,
+                dict: query.currentDBMap
+            }
+        } else {
+            return {
+                success: false,
+                msg: "Viejo, no se encontró nada en la DB"
+            }
+        }
+    } catch (error) {
+        console.error("Error db_mapper getCurrentSavedDBMap: " + error.stack)
+        return {
+            success: false,
+            code: "GET_CURRENT_SAVED_DB_MAP_INTERNAL_ERROR",
+            msg: "Error interno"
         }
     }
 }
