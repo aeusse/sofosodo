@@ -1,0 +1,17 @@
+
+button {
+  min-width: 14em;
+}
+
+h1 {
+  text-align: center;
+  margin: 2%;
+}
+
+#loading_div {
+  position: fixed;
+  margin-top: 30%;
+  width: 20em;
+  left: 50%;
+  margin-left: -5em;
+}

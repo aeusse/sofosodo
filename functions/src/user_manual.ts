@@ -2,6 +2,28 @@ import * as admin from 'firebase-admin'
 
 const db = admin.firestore()
 
+export async function getUserManuals() {
+    try {
+
+        const manuals = (await db.collection("/softwares").doc("qanty")
+        .collection("userManuals").get()).docs
+
+        console.log(manuals)
+        
+        return{
+            success: true
+        }
+
+    } catch (error) {
+        console.error("Error user_manuals get: " + error.stack)
+        return {
+            success: false,
+            code: "GET_USER_MANUAL_INTERNAL_ERROR",
+            msg: "Error interno"
+        }
+    }
+}
+
 export async function getCurrent() {
     try {
 

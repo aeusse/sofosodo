@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions'
 
 import * as userManualFuncs from './user_manual'
 import * as dbMapperFuncs from './db_mapper'
+import * as mainFuncs from './main'
+import * as utils from './utils'
 
 //-
 //- Setups
@@ -42,9 +44,36 @@ module.exports = functions.https.onCall(async (data, context) => {
 	return fnResult
 })
 
-//-
+//-------------------
 //- Métodos expuestos
+//-------------------
+
 //-
+//- Listado principal, o sea, los Softwares
+
+nativeFuncs.get_softwares = (async (session: any) => {
+	return await mainFuncs.getSoftwares()
+})
+nativeFuncs.register_new_software = (async (session: any, data: any) => {
+	const check = utils.checkStringParam("name", data.name)
+	if (check.success == false){
+		return {
+			success: false,
+			code: check.code,
+			msg: check.msg
+		}
+	}
+	return await mainFuncs.registerNewSoftware(data.name)
+})
+
+//-
+//- User Manual
+nativeFuncs.get_user_manuals = (async (session: any) => {
+
+	return await userManualFuncs.getUserManuals()
+
+})
+
 nativeFuncs.get_current_user_manual = (async (session: any) => {
 
 	return await userManualFuncs.getCurrent()
