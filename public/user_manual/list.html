@@ -9,13 +9,13 @@
   <script src="/__/firebase/5.9.4/firebase-auth.js"></script>
   <script src="/__/firebase/5.9.4/firebase-storage.js"></script>
   <script src="/__/firebase/init.js"></script>
-  
+
   <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 
   <script src="../assets/js/jquery-3.4.0.min.js"></script>
   <script src="../assets/js/bootstrap.min.js"></script>
 
-  <link rel="stylesheet" href="../assets/css/user_manual/index.css">
+  <link rel="stylesheet" href="../assets/css/common.css">
 
 </head>
 
@@ -26,29 +26,28 @@
   </div>
 
   <div>
-    <h1 style="text-align: center; margin: 2%;">
-      Selecciona o crea un manual para el software Qanty
-    </h1>
+    <h3 style="text-align: center; margin: 2%;">
+      Selecciona o crea un manual para el software <span id="software_name_span_text"></span>
+    </h3>
   </div>
+  <br>
+  <br>
+  <div id="result" style="text-align:center;"></div>
   <div style="text-align:center;">
-    <button onclick="clic();">Adminstrador</button>
     <br>
     <br>
-    <button onclick="createOne();">Crear</button>
-    <br>
-    <br>
+    <button class="btn btn-warning btn-lg" onclick="createManual();">Crear</button>
   </div>
 </body>
 
 <script>
-  function clic(){
-    window.location="/user_manual/editor.html"
-  }
-  
+  localStorage.removeItem("manual_id")
+  localStorage.removeItem("manual_name")
+  localStorage.removeItem("need_to_save")
 </script>
 
 <script src="../assets/js/common.js"></script>
-<script src="../assets/js/user_manual/index.js"></script>
+<script src="../assets/js/user_manual/list.js"></script>
 
 
 </html>

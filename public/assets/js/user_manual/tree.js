@@ -50,8 +50,12 @@ function appendSubItem(parentPath){
     const nextPath = parentPath.concat(curSubLiIdx);
     const nextSubUlIdPath = parentSubUlIdPath + "_" + curSubLiIdx;
 
+    let parentPathText = "";
+    for (let i of nextPath){
+        parentPathText += (parseInt(i)+1) + ".";
+    }
     $("#sub_ul" + parentSubUlIdPath).append(`<li>
-        <span id="li_title${nextSubUlIdPath}" onclick="editItem([${nextPath}]);">${titleTxt}</span>
+        <span id="li_title${nextSubUlIdPath}" onclick="editItem([${nextPath}]);">${parentPathText.slice(0, -1)} &nbsp;&nbsp; ${titleTxt}</span>
         <button class="liButtons" onclick="editLi([${nextPath}]);">Editar título</button>
         <button class="liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
         <ul id="sub_ul${nextSubUlIdPath}"></ul>
@@ -95,9 +99,11 @@ function preview(){
 }
 
 $(async function() {
+    $("#software_name_display").text(softwareName);
+    $("#manual_name_display").text(localStorage.getItem("manual_name"));
     const needToSave = localStorage.getItem("need_to_save");
     if (needToSave === "true"){
-        const saveOldWork = confirm("Al parecer en la sesión anterior no se enviaron los cambios al servidor. Desea guardarlos? (Si cancela, estos cambios se pierden)");
+        const saveOldWork = confirm("Al parecer en la sesión anterior no se enviaron los cambios al servidor. Desea guardarlos? (Si cancela, esos cambios se pierden)");
         if (saveOldWork === true){
             const result = await save();
             if (result.success !== true){

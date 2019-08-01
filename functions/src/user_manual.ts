@@ -2,27 +2,28 @@ import * as admin from 'firebase-admin'
 
 const db = admin.firestore()
 
-export async function getUserManuals() {
+export async function getUserManuals(softwareId: string) {
     try {
-
-        const manuals = (await db.collection("/softwares").doc("qanty")
-        .collection("userManuals").get()).docs
-
-        console.log(manuals)
-        
-        return{
-            success: true
+        const docs = (await db.collection("/softwares").doc(softwareId)
+        .collection("manuals").orderBy("issueDate", "asc").get()).docs
+        const result: any = {}
+        for (const doc of docs) {
+            result[doc.id] = doc.data()
         }
-
+        return {
+            success: true,
+            manuals: result
+        }
     } catch (error) {
-        console.error("Error user_manuals get: " + error.stack)
+        console.error("Error Main getSoftwares: " + error.stack)
         return {
             success: false,
-            code: "GET_USER_MANUAL_INTERNAL_ERROR",
+            code: "GET_USER_MANUALS_INTERNAL_ERROR",
             msg: "Error interno"
         }
     }
 }
+
 
 export async function getCurrent() {
     try {
@@ -49,6 +50,31 @@ export async function getCurrent() {
     }
 }
 
+export async function createNewManual(name: string, softwareId: string) {
+    try {
+        const now = (new Date()).getTime()
+
+        //- TO DO: Validar si ya existe ese nombre
+
+        const create = await db.collection("/softwares").doc(softwareId)
+        .collection("manuals").add({
+            name: name,
+            issueDate: now
+        })
+        return {
+            success: true,
+            id: create.id
+        }
+    } catch (error) {
+        console.error("Error User Manuals createNewManual: " + error.stack)
+        return {
+            success: false,
+            code: "CREATE_NEW_MANUAL_INTERNAL_ERROR",
+            msg: "Error interno"
+        }
+    }
+}
+
 export async function save(treeToSave:any, checkpointTree:any) {
     try {
         const transResult = await db.runTransaction(async transaction => {
@@ -60,7 +86,7 @@ export async function save(treeToSave:any, checkpointTree:any) {
                     return{
                         success: false,
                         code: "INTEGRITY_CHECK_WARNING",
-                        msg: "Se han realizado cambios en la DB desde que usted cargó la aplicación. Por favor corrobe a mano"
+                        msg: "Se han realizado cambios en la DB desde que usted cargó este manual. Por favor corrobe"
                     }
                 }
             }

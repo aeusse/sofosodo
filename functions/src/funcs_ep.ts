@@ -68,10 +68,19 @@ nativeFuncs.register_new_software = (async (session: any, data: any) => {
 
 //-
 //- User Manual
-nativeFuncs.get_user_manuals = (async (session: any) => {
-
-	return await userManualFuncs.getUserManuals()
-
+nativeFuncs.get_user_manuals = (async (session: any, data: any) => {
+	return await userManualFuncs.getUserManuals(data.software_id)
+})
+nativeFuncs.create_new_manual = (async (session: any, data: any) => {
+	const check = utils.checkStringParam("name", data.name)
+	if (check.success == false){
+		return {
+			success: false,
+			code: check.code,
+			msg: check.msg
+		}
+	}
+	return await userManualFuncs.createNewManual(data.name, data.software_id)
 })
 
 nativeFuncs.get_current_user_manual = (async (session: any) => {
@@ -88,16 +97,15 @@ nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 
 })
 
+//-
+//- Listado principal, o sea, los Softwares
+
 nativeFuncs.get_full_db_map = (async (session: any) => {
-
 	const result = await dbMapperFuncs.getFullMap()
-
 	return result
-
 })
 
 nativeFuncs.save_full_db_map = (async (session: any, data: any) => {
-
 	if (data === null || data.dict === undefined){
 		return {
 			success: false,
@@ -113,13 +121,9 @@ nativeFuncs.save_full_db_map = (async (session: any, data: any) => {
 	const result = await dbMapperFuncs.saveFullMap(data.dict)
 
 	return result
-
 })
 
 nativeFuncs.get_current_saved_db_map = (async (session: any) => {
-
 	const result = await dbMapperFuncs.getCurrentSavedDBMap()
-
 	return result
-
 })
