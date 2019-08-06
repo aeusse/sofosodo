@@ -1,7 +1,6 @@
 const storageService = firebase.storage();
 const storageRef = storageService.ref();
 
-const initialFields = {};
 let modifiedData = {};
 
 function editItem(path) {
@@ -19,12 +18,11 @@ function editItem(path) {
     const targetObject = o[closerParentIdx];
 
     for (let idx in targetObject.data){
-        const field = targetObject.data[idx];
-        initialFields[idx] = field;
-        if (field.type === "text"){
-            addParagraph(parseInt(idx));
+        const initialField = targetObject.data[idx];
+        if (initialField.type === "text"){
+            addParagraph(parseInt(idx), initialField);
         }else{
-            addImage(parseInt(idx));
+            addImage(parseInt(idx), initialField);
         }
     }
     $("#tree_container").hide();
@@ -50,7 +48,6 @@ function handleFileUploadSubmit(e) {
         console.log(error);
     }, async () => {
         // Do something once upload is complete
-        console.log('success');
         const uploadedImageUrl = await uploadRef.getDownloadURL();
         $(`#content_${targetIdx} div.uploadedImageDivs`).empty();
         $(`#content_${targetIdx} div.uploadedImageDivs`).prepend(`<img src="${uploadedImageUrl}" />`);
@@ -60,20 +57,41 @@ function handleFileUploadSubmit(e) {
 }
 
 function refreshBlurListeners(){
-    console.log("refreshBlurListeners")
     $(".blur_trigger").unbind("blur");
     $(".blur_trigger").blur(function() {
         refreshEnteredData();
     });
     refreshEnteredData();
 }
-function addParagraph(idx) {
-    const innerHtml = `<input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();"><label class="where_to_show_checks"> Usuario final</label><br>
-      <textarea id="textarea_${idx}" class="blur_trigger"></textarea>
-      <br>
-      <br>
-      <button class="add_text_or_image_buttons" onclick="addParagraph(${idx + 1});">Texto</button>
-      <button class="add_text_or_image_buttons" onclick="addImage(${idx + 1});">Imagen</button>`;
+function addParagraph(idx, initialField) {
+    const innerHtml = `<div class="container-fluid">
+        <div class="row">
+          <div class="col-4">
+            <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();">
+            <label class="where_to_show_checks"> Usuario final</label>
+          </div>
+          <div class="col-5">
+            <select id="language_select_${idx}" class="language_selects blur_trigger custom-select">
+              <option value="spanish">Español</option>
+              <option value="english">Inglés</option>
+              <option value="portuguese">Portugués</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <textarea class="form-control" id="textarea_${idx}" class="blur_trigger"></textarea>
+          </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-12">
+            <button class="add_text_or_image_buttons btn btn-outline-dark" onclick="addParagraph(${idx + 1});">Texto</button>
+            <button class="add_text_or_image_buttons btn btn-outline-dark" onclick="addImage(${idx + 1});">Imagen</button>
+          </div>
+        </div>
+      </div>`;
     if ($(`#content_${idx}`).length === 0) {
         const html = `<div id="content_${idx}" class="contents" data-idx="${idx}" data-type="text">` + innerHtml + `</div>`;
         $("#developer_edition_zone").append(html);
@@ -82,23 +100,53 @@ function addParagraph(idx) {
         $(`#content_${idx}`).html(innerHtml);
         $(`#content_${idx}`).data("type", "text");
     }
-    if (initialFields[idx] && initialFields[idx].type === "text"){
-        $(`#textarea_${idx}`).val(initialFields[idx].text)
-        if (initialFields[idx].finalUser === true){
+    if (initialField && initialField.type === "text"){
+        $(`#textarea_${idx}`).val(initialField.text)
+        $(`#language_select_${idx}`).val(initialField.language)
+        if (initialField.finalUser === true){
             $(`#where_to_show_checkbox_${idx}`).prop('checked', true);
         }
     }
     refreshBlurListeners();
 }
-function addImage(idx) {
-    const innerHtml = `<input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();"><label class="where_to_show_checks"> Usuario final</label><br>
-      <div class="uploadedImageDivs"></div>
-      <input id="file-select_${idx}" type="file" class="add_text_or_image_buttons" accept="image/*" />
-      <button id="file-submit_${idx}" data-idx="${idx}" class="add_text_or_image_buttons">Subir</button>
-      <br>
-      <br>
-      <button class="add_text_or_image_buttons" onclick="addParagraph(${idx + 1});">Texto</button>
-      <button class="add_text_or_image_buttons" onclick="addImage(${idx + 1});">Imagen</button>`;
+function addImage(idx, initialField) {
+    const innerHtml = `<div class="container-fluid">
+        <div class="row">
+          <div class="col-4">
+            <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();">
+            <label class="where_to_show_checks"> Usuario final</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="uploadedImageDivs"></div>
+          </div>
+        </div>
+        <div class="row input-group">
+          <div class="custom-file">
+            <input id="file-select_${idx}" type="file" class="custom-file-input" accept="image/*" />
+            <label class="custom-file-label" for="file-select_${idx}">Escoge un archivo</label>
+          </div>
+          <div class="input-group-append">
+            <button id="file-submit_${idx}" data-idx="${idx}" class="input-group-text add_text_or_image_buttons" type="button">Subir</button>
+          </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-12">
+            <button class="add_text_or_image_buttons btn btn-outline-dark" onclick="addParagraph(${idx + 1});">Texto</button>
+            <button class="add_text_or_image_buttons btn btn-outline-dark" onclick="addImage(${idx + 1});">Imagen</button>
+          </div>
+        </div>
+      </div>
+      <script>
+          $('#file-select_${idx}').on('change',function(){
+              var fileName = $(this).val();
+              $(this).next('.custom-file-label').html(fileName);
+          })
+      </script>
+      `;
     if ($(`#content_${idx}`).length === 0) {
         const html = `<div id="content_${idx}" class="contents" data-idx="${idx}" data-type="image">` + innerHtml + `</div>`;
         $("#developer_edition_zone").append(html);
@@ -108,11 +156,11 @@ function addImage(idx) {
         $(`#content_${idx}`).data("type", "image");
     }
     $(document).on('click', `#file-submit_${idx}`, handleFileUploadSubmit);
-    if (initialFields[idx] && initialFields[idx].type === "image"){
+    if (initialField && initialField.type === "image"){
         $(`#content_${idx} div.uploadedImageDivs`).empty();
-        $(`#content_${idx} div.uploadedImageDivs`).prepend(`<img src="${initialFields[idx].url}" />`);
-        $(`#content_${idx} div.uploadedImageDivs`).data("img_url", initialFields[idx].url);
-        if (initialFields[idx].finalUser === true){
+        $(`#content_${idx} div.uploadedImageDivs`).prepend(`<img src="${initialField.url}" />`);
+        $(`#content_${idx} div.uploadedImageDivs`).data("img_url", initialField.url);
+        if (initialField.finalUser === true){
             $(`#where_to_show_checkbox_${idx}`).prop('checked', true);
         }
     }
@@ -120,7 +168,6 @@ function addImage(idx) {
 }
 
 function refreshEnteredData(){
-    console.log("refreshEnteredData")
     let finalViewHtml = "";
     const elements = $(".contents");
     modifiedData = {};
@@ -142,8 +189,9 @@ function refreshEnteredData(){
             }
         }else{
             modifiedData[dataIdx].text = $(`#textarea_${dataIdx}`).val();
+            modifiedData[dataIdx].language = $(`#language_select_${dataIdx}`).val();
             if (modifiedData[dataIdx].finalUser){
-                finalViewHtml += `<div class="finalViewParagraph"><p>${modifiedData[dataIdx].text}</p></div>`;
+                finalViewHtml += `<div class="finalViewParagraph"><font size="2px">(${modifiedData[dataIdx].language})</font><p>${modifiedData[dataIdx].text}</p></div>`;
             }
         }
     }

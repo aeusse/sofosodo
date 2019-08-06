@@ -43,12 +43,21 @@ li{
     margin-top: 17px;
 }
 
+.custom-file{
+    font-size: 13px;
+}
+
 .add_text_or_image_buttons{
     vertical-align: top;
     font-size: 13px;
 }
 
 .where_to_show_checks{
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+.language_selects{
     vertical-align: middle;
     font-size: 13px;
 }

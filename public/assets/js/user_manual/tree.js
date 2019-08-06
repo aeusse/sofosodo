@@ -1,4 +1,6 @@
 
+const manualName = localStorage.getItem("manual_name");
+
 // Firebase
 const firestore = firebase.firestore();
 firebase.functions()._url = function (name) {
@@ -100,7 +102,8 @@ function preview(){
 
 $(async function() {
     $("#software_name_display").text(softwareName);
-    $("#manual_name_display").text(localStorage.getItem("manual_name"));
+    $("#manual_name_display").text(manualName);
+
     const needToSave = localStorage.getItem("need_to_save");
     if (needToSave === "true"){
         const saveOldWork = confirm("Al parecer en la sesión anterior no se enviaron los cambios al servidor. Desea guardarlos? (Si cancela, esos cambios se pierden)");

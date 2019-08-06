@@ -25,9 +25,9 @@
     <div class="row">
       <div class="w-100" style="border: solid 2px green; ">
 
-        <button class="alignleft" onclick="appendItem();">Agregar</button>
-        <button class="alignright" onclick="preview();">Previsualización</button>
-        <button class="alignright" onclick="save();">Guardar</button>
+        <button class="alignleft btn btn-dark" onclick="appendItem();">Agregar</button>
+        <button class="alignright btn btn-info" onclick="preview();">Previsualización</button>
+        <button class="alignright btn btn-warning" onclick="save();">Guardar</button>
         <div style="clear: both;">
           <ul id="root_ul"></ul>
         </div>
@@ -51,8 +51,14 @@
       <div id="developer_edition_zone" class="col">
         <label class="type_indicator_title">Vista interna + edición</label>
         <br>
-        <button class="add_text_or_image_buttons" onclick="addParagraph(0);">Texto</button>
-        <button class="add_text_or_image_buttons" onclick="addImage(0);">Imagen</button>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <button class="add_text_or_image_buttons btn btn-outline-dark" onclick="addParagraph(0);">Texto</button>
+              <button class="add_text_or_image_buttons btn btn-outline-dark" onclick="addImage(0);">Imagen</button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
