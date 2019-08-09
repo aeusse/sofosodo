@@ -9,4 +9,7 @@ function goToDbMapper() {
 
 $(function () {
     $("#software_title_display").text(softwareName);
+    if (softwareName.toLowerCase() === "qanty"){
+        $("#go_to_dbmapper_button").show();
+    }
 });

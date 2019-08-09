@@ -110,10 +110,14 @@ function processData(result: any, c: any, data: any) {
     const thisResultFields = result[c.id]["fields"]
     for (const key in data) {
         if (typeof (data[key]) === "object") {
-            if (typeof thisResultFields[key] === "undefined") {
-                thisResultFields[key] = {}
+            if (Array.isArray(data[key])) {
+                thisResultFields[key] = "array"
+            } else {
+                if (typeof thisResultFields[key] === "undefined") {
+                    thisResultFields[key] = {}
+                }
+                walkThroughSingleObject(thisResultFields[key], data[key])
             }
-            walkThroughSingleObject(thisResultFields[key], data[key])
         } else {
             thisResultFields[key] = typeof (data[key])
         }
@@ -123,19 +127,25 @@ function processData(result: any, c: any, data: any) {
 function walkThroughSingleObject(target: any, field: any) {
     for (const subKey in field) {
         if (typeof (field[subKey]) === "object") {
-            if (typeof target[subKey] === "undefined") {
-                target[subKey] = {}
+            if (Array.isArray(field[subKey])) {
+                target[subKey] = "array"
+            } else {
+                if (typeof target[subKey] === "undefined") {
+                    target[subKey] = {}
+                }
+                walkThroughSingleObject(target[subKey], field[subKey]);
             }
-            walkThroughSingleObject(target[subKey], field[subKey]);
         } else {
             target[subKey] = typeof (field[subKey])
         }
     }
 }
 
-export async function saveFullMap(dict: any) {
+export async function saveFullMap(softwareId: string, newBody: any) {
     try {
-        await db.collection("softwares").doc("qanty").set({ currentDBMap: dict }, { merge: true })
+        await db.collection("softwares").doc(softwareId)
+            .collection("dbMaps").doc("currentDBMap")
+            .set({ currentDBMap: newBody }, { merge: true })
         return { success: true }
     } catch (error) {
         console.error("Error db_mapper saveFullMap: " + error.stack)
@@ -147,13 +157,15 @@ export async function saveFullMap(dict: any) {
     }
 }
 
-export async function getCurrentSavedDBMap() {
+export async function getCurrentSavedDBMap(softwareId: string) {
     try {
-        const query = (await db.collection("softwares").doc("qanty").get()).data()
-        if (query) {
+        const data = (await db.collection("softwares").doc(softwareId)
+            .collection("dbMaps").doc("currentDBMap")
+            .get()).data()
+        if (data) {
             return {
                 success: true,
-                dict: query.currentDBMap
+                body: data
             }
         } else {
             return {

@@ -99,24 +99,24 @@ nativeFuncs.get_full_db_map = (async (session: any) => {
 })
 
 nativeFuncs.save_full_db_map = (async (session: any, data: any) => {
-	if (data === null || data.dict === undefined) {
+	if (data === null || data.new_body === undefined) {
 		return {
 			success: false,
 			msg: "Me estás cargando ché boludo!!"
 		}
 	}
-	if (Object.keys(data.dict).length === 0 && data.dict.constructor === Object) {
+	if (Object.keys(data.new_body).length === 0 && data.new_body.constructor === Object) {
 		return {
 			success: false,
 			msg: "Ese objeto está vacío papito!"
 		}
 	}
-	const result = await dbMapperFuncs.saveFullMap(data.dict)
+	const result = await dbMapperFuncs.saveFullMap(data.software_id, data.new_body)
 
 	return result
 })
 
-nativeFuncs.get_current_saved_db_map = (async (session: any) => {
-	const result = await dbMapperFuncs.getCurrentSavedDBMap()
+nativeFuncs.get_current_saved_db_map = (async (session: any, data: any) => {
+	const result = await dbMapperFuncs.getCurrentSavedDBMap(data.software_id)
 	return result
 })

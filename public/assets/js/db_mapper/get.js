@@ -16,12 +16,12 @@ async function getFullDbMap() {
         $("#loading_div").show();
         $("button").attr("disabled", true);
         const fullDbMapCall = firebase.functions().httpsCallable('get_full_db_map');
-        const result = await fullDbMapCall();
-        if (result.data.success === true) {
-            currentDBMap = result.data.dict;
+        const result = (await fullDbMapCall()).data;
+        if (result.success === true) {
+            currentDBMap = result.dict;
             $("#walker_result").html(renderjson(currentDBMap));
         } else {
-            alert(result.data.msg);
+            alert(result.msg);
         }
         $("#loading_div").hide();
         $("button").attr("disabled", false);
@@ -38,13 +38,16 @@ async function saveFullDbMap() {
         $("#loading_div").show();
         $("button").attr("disabled", true);
         const fullDbMapSave = firebase.functions().httpsCallable('save_full_db_map');
-        const result = await fullDbMapSave({ "dict": currentDBMap });
-        if (result.data.success === true) {
+        const result = (await fullDbMapSave({
+            software_id: softwareId,
+            new_body: currentDBMap
+        })).data;
+        if (result.success === true) {
             alert("hecho!");
             $("#last_saved").html(renderjson(currentDBMap));
             $("button").attr("disabled", false);
         } else {
-            alert(result.data.msg);
+            alert(result.msg);
             $("#get_full_db_map_button").attr("disabled", false);
         }
         $("#loading_div").hide();
@@ -60,15 +63,15 @@ $(async function () {
     try {
         $("button").attr("disabled", true);
         const getCurrentDbMapCall = firebase.functions().httpsCallable('get_current_saved_db_map');
-        const result = await getCurrentDbMapCall();
-        if (result.data.success === true) {
-            if (result.data.dict === null){
+        const result = (await getCurrentDbMapCall({ software_id: softwareId })).data;
+        if (result.success === true) {
+            if (result.body === null) {
                 $("#last_saved").html("Todavía no has guardado nada jeje");
-            }else{
-                $("#last_saved").html(renderjson(result.data.dict));
+            } else {
+                $("#last_saved").html(renderjson(result.body));
             }
         } else {
-            alert(result.data.msg);
+            alert(result.msg);
         }
         $("#loading_div").hide();
         $("#get_full_db_map_button").attr("disabled", false);
