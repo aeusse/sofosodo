@@ -5,7 +5,7 @@ const db = admin.firestore()
 export async function getUserManuals(softwareId: string) {
     try {
         const docs = (await db.collection("/softwares").doc(softwareId)
-        .collection("manuals").orderBy("issueDate", "asc").get()).docs
+            .collection("manuals").orderBy("issueDate", "asc").get()).docs
         const result: any = {}
         for (const doc of docs) {
             result[doc.id] = doc.data()
@@ -15,7 +15,7 @@ export async function getUserManuals(softwareId: string) {
             manuals: result
         }
     } catch (error) {
-        console.error("Error Main getSoftwares: " + error.stack)
+        console.error("Error User manual getUserManuals: " + error.stack)
         return {
             success: false,
             code: "GET_USER_MANUALS_INTERNAL_ERROR",
@@ -25,26 +25,26 @@ export async function getUserManuals(softwareId: string) {
 }
 
 
-export async function getCurrent() {
+export async function getManualBody(softwareId: string, manualId: string) {
     try {
-
-        const softwareInfo = (await db.collection("/softwares").doc("qanty").get()).data()
-        let currentManual:string
-        if (softwareInfo){
-            currentManual = softwareInfo.currentManual || JSON.stringify({})
-        }else{
-            currentManual = JSON.stringify({})
+        const softwareInfo = (await db.collection("/softwares").doc(softwareId)
+            .collection("manuals").doc(manualId)
+            .get()).data()
+        let body: string
+        if (softwareInfo) {
+            body = softwareInfo.body || JSON.stringify({})
+        } else {
+            body = JSON.stringify({})
         }
-        return{
+        return {
             success: true,
-            currentManual: currentManual
+            body: body
         }
-
     } catch (error) {
-        console.error("Error user_manual get: " + error.stack)
+        console.error("Error user_manual getManualBody: " + error.stack)
         return {
             success: false,
-            code: "GET_USER_MANUAL_INTERNAL_ERROR",
+            code: "GET_MANUAL_BODY_INTERNAL_ERROR",
             msg: "Error interno"
         }
     }
@@ -57,10 +57,10 @@ export async function createNewManual(name: string, softwareId: string) {
         //- TO DO: Validar si ya existe ese nombre
 
         const create = await db.collection("/softwares").doc(softwareId)
-        .collection("manuals").add({
-            name: name,
-            issueDate: now
-        })
+            .collection("manuals").add({
+                name: name,
+                issueDate: now
+            })
         return {
             success: true,
             id: create.id
@@ -75,15 +75,16 @@ export async function createNewManual(name: string, softwareId: string) {
     }
 }
 
-export async function save(treeToSave:any, checkpointTree:any) {
+export async function save(softwareId: string, manualId: string, treeToSave: any, checkpointTree: any) {
     try {
         const transResult = await db.runTransaction(async transaction => {
-            const docRef = db.collection("/softwares").doc("qanty")
+            const docRef = db.collection("/softwares").doc(softwareId)
+                .collection("manuals").doc(manualId)
             const softwareInfo = (await transaction.get(docRef)).data()
 
-            if (softwareInfo && softwareInfo.currentManual !== undefined){
-                if (softwareInfo.currentManual !== checkpointTree){
-                    return{
+            if (softwareInfo && softwareInfo.body !== undefined) {
+                if (softwareInfo.body !== checkpointTree) {
+                    return {
                         success: false,
                         code: "INTEGRITY_CHECK_WARNING",
                         msg: "Se han realizado cambios en la DB desde que usted cargó este manual. Por favor corrobe"
@@ -91,7 +92,7 @@ export async function save(treeToSave:any, checkpointTree:any) {
                 }
             }
 
-            transaction.set(docRef, {currentManual: treeToSave}, { merge: true })
+            transaction.set(docRef, { body: treeToSave }, { merge: true })
 
             return {
                 success: true

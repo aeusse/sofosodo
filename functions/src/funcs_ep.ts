@@ -56,7 +56,7 @@ nativeFuncs.get_softwares = (async (session: any) => {
 })
 nativeFuncs.register_new_software = (async (session: any, data: any) => {
 	const check = utils.checkStringParam("name", data.name)
-	if (check.success == false){
+	if (check.success == false) {
 		return {
 			success: false,
 			code: check.code,
@@ -73,7 +73,7 @@ nativeFuncs.get_user_manuals = (async (session: any, data: any) => {
 })
 nativeFuncs.create_new_manual = (async (session: any, data: any) => {
 	const check = utils.checkStringParam("name", data.name)
-	if (check.success == false){
+	if (check.success == false) {
 		return {
 			success: false,
 			code: check.code,
@@ -82,23 +82,16 @@ nativeFuncs.create_new_manual = (async (session: any, data: any) => {
 	}
 	return await userManualFuncs.createNewManual(data.name, data.software_id)
 })
-
-nativeFuncs.get_current_user_manual = (async (session: any) => {
-
-	return await userManualFuncs.getCurrent()
-
+nativeFuncs.get_manual_body = (async (session: any, data: any) => {
+	return await userManualFuncs.getManualBody(data.software_id, data.manual_id)
 })
-
 nativeFuncs.save_user_manual = (async (session: any, data: any) => {
-
-	const result = await userManualFuncs.save(data.tree, data.checkpoint_tree)
-
+	const result = await userManualFuncs.save(data.software_id, data.manual_id, data.tree, data.checkpoint_tree)
 	return result
-
 })
 
 //-
-//- Listado principal, o sea, los Softwares
+//- DB Walker
 
 nativeFuncs.get_full_db_map = (async (session: any) => {
 	const result = await dbMapperFuncs.getFullMap()
@@ -106,13 +99,13 @@ nativeFuncs.get_full_db_map = (async (session: any) => {
 })
 
 nativeFuncs.save_full_db_map = (async (session: any, data: any) => {
-	if (data === null || data.dict === undefined){
+	if (data === null || data.dict === undefined) {
 		return {
 			success: false,
 			msg: "Me estás cargando ché boludo!!"
 		}
 	}
-	if (Object.keys(data.dict).length === 0 && data.dict.constructor === Object){
+	if (Object.keys(data.dict).length === 0 && data.dict.constructor === Object) {
 		return {
 			success: false,
 			msg: "Ese objeto está vacío papito!"

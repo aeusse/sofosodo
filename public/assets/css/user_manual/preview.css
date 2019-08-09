@@ -45,17 +45,17 @@ page[size="A4"] {
   margin-top: 30%;
 }
 
-#titulo_del_prefacio{
+.titulo_del_prefacio{
   font-size: 8mm;
   margin: 15mm 15mm 0mm 15mm;
   font-weight: bold;
 }
-#contenido_del_prefacio {
+.contenido_del_prefacio {
   text-align: justify;
   margin: 15mm;
 }
 
-#index_title{
+.index_title{
   font-size: 8mm;
   margin: 15mm 15mm 0mm 15mm;
   font-weight: bold;
@@ -85,12 +85,12 @@ p {
   margin-right: 15mm;
   margin-bottom: 8mm;
 }
-#manual_title_description{
+.title_description{
   font-size: 9mm;
   float: right;
   margin-right: 15mm;
 }
-#manual_title_title{
+.subtitle{
   font-size: 16mm;
   margin-left: 15mm;
   margin-top: 190mm;

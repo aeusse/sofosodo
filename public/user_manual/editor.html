@@ -11,22 +11,28 @@
   <script src="/__/firebase/init.js"></script>
 
   <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/css/iziModal.min.css">
   <link rel="stylesheet" href="../assets/css/user_manual/edition.css">
 
   <script src="../assets/js/jquery-3.4.0.min.js"></script>
+  <script src="../assets/js/iziModal.min.js"></script>
   <script src="../assets/js/bootstrap.min.js"></script>
 
 </head>
 
 <body>
-  <div><h3>&nbsp;&nbsp;<b><span id="software_name_display"></span></b> - <span id="manual_name_display" style="font-style: italic;"></span></h3></div>
+  <div>
+    <h3>&nbsp;&nbsp;<b><span id="software_name_display"></span></b> - <span id="manual_name_display"
+        style="font-style: italic;"></span></h3>
+  </div>
   <!-- Árbol Principal -->
   <div id="tree_container" class="container-fluid" style="display: block;">
     <div class="row">
       <div class="w-100" style="border: solid 2px green; ">
 
         <button class="alignleft btn btn-dark" onclick="appendItem();">Agregar</button>
-        <button class="alignright btn btn-info" onclick="preview();">Previsualización</button>
+        <button class="alignright btn btn-info"
+          onclick="$('#language_selection_preview').iziModal('open');">Previsualización</button>
         <button class="alignright btn btn-warning" onclick="save();">Guardar</button>
         <div style="clear: both;">
           <ul id="root_ul"></ul>
@@ -64,9 +70,30 @@
     </div>
   </div>
 
+  <!-- Modal para seleccionar el idioma de la previsualización -->
+  <div id="language_selection_preview" data-iziModal-title="¿Cuál idioma quiere ver?" data-iziModal-icon="icon-home">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12" align="center">
+          <br>
+          <button class="btn btn-info" onclick="preview('spanish');">Español</button>
+          <br>
+          <br>
+          <button class="btn btn-info" onclick="preview('english');">Inglés</button>
+          <br>
+          <br>
+          <button class="btn btn-info" onclick="preview('portuguese');">Portugués</button>
+          <br>
+          <br>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 <script>
+  localStorage.removeItem("language_preview");
   let tree = JSON.parse(localStorage.getItem("tree"));
   //let tree = JSON.parse('[{"title":"El título 0","children":[]},{"title":"El título 1","children":[]},{"title":"El título 2","children":[]},{"title":"El título 3","children":[{"title":"El subtítulo _3 0","children":[]},{"title":"El subtítulo _3 1","children":[{"title":"El subtítulo _3_1 0","children":[]},{"title":"El subtítulo _3_1 1","children":[]},{"title":"El subtítulo _3_1 2","children":[]},{"title":"El subtítulo _3_1 3","children":[]},{"title":"El subtítulo _3_1 4","children":[]}]}]}]');
   //let tree = JSON.parse('[{"title":"El título 0","children":[]},{"title":"El título 1","children":[]},{"title":"El título 2","children":[]},{"title":"El título 3","children":[{"title":"El subtítulo _3 0","children":[]},{"title":"El subtítulo _3 1","children":[{"title":"El subtítulo _3_1 0","children":[]},{"title":"El subtítulo _3_1 1","children":[]},{"title":"El subtítulo _3_1 2","children":[],"data":{"0":{"type":"text","text":"dfhg","finalUser":true},"1":{"type":"image","url":"https://firebasestorage.googleapis.com/v0/b/sofosodo-dev.appspot.com/o/images%2FWhatsApp%20Image%202019-04-09%20at%2018.04.58.jpeg?alt=media&token=36459b0c-3840-4049-8b4e-f26a1f7303d1","finalUser":false},"2":{"type":"text","text":"Otro párrafo más ","finalUser":true},"3":{"type":"image","url":"https://firebasestorage.googleapis.com/v0/b/sofosodo-dev.appspot.com/o/images%2FWhatsApp%20Image%202018-07-30%20at%2012.08.24.jpeg?alt=media&token=3e1520ca-e335-40d7-b0bf-ba0c0982e916","finalUser":false},"4":{"type":"image","finalUser":false}}},{"title":"El subtítulo _3_1 3","children":[]},{"title":"El subtítulo _3_1 4","children":[]}]}]}]');

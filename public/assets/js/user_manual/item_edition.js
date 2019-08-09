@@ -28,7 +28,10 @@ function editItem(path) {
     $("#tree_container").hide();
     $("#item_edition_title").show();
     $("#item_edition_body").show();
-    $("#item_edition_title").html(fullPathTitleText + "<b>" + targetObject.title + "</b>");
+    $("#item_edition_title").html(`${fullPathTitleText}
+    <b>${targetObject.titleTranslations.spanish}</b>
+    (${targetObject.titleTranslations.english}) (${targetObject.titleTranslations.portuguese})
+    `);
     $('#item_edition_title').off('click');
     $("#item_edition_title").click( function(){
         saveToLocalStorage(path);
