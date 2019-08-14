@@ -145,7 +145,7 @@ export async function saveFullMap(softwareId: string, newBody: any) {
     try {
         await db.collection("softwares").doc(softwareId)
             .collection("dbMaps").doc("currentDBMap")
-            .set({ currentDBMap: newBody }, { merge: true })
+            .set(newBody, { merge: true })
         return { success: true }
     } catch (error) {
         console.error("Error db_mapper saveFullMap: " + error.stack)

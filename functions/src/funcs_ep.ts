@@ -56,7 +56,7 @@ nativeFuncs.get_softwares = (async (session: any) => {
 })
 nativeFuncs.register_new_software = (async (session: any, data: any) => {
 	const check = utils.checkStringParam("name", data.name)
-	if (check.success == false) {
+	if (check.success === false) {
 		return {
 			success: false,
 			code: check.code,
@@ -73,7 +73,7 @@ nativeFuncs.get_user_manuals = (async (session: any, data: any) => {
 })
 nativeFuncs.create_new_manual = (async (session: any, data: any) => {
 	const check = utils.checkStringParam("name", data.name)
-	if (check.success == false) {
+	if (check.success === false) {
 		return {
 			success: false,
 			code: check.code,
