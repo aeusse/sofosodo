@@ -7,9 +7,23 @@ firebase.functions()._url = function (name) {
     return `/funcs/${name}`;
 }
 
-//- Renderjson confs
-renderjson.set_show_to_level("all");
-renderjson.set_sort_objects(true);
+function renderJson(obj) {
+    var result = document.createElement('ul');
+    for (key in obj) {
+        var list = document.createElement('li')
+        var textnode = document.createTextNode(key);
+        list.appendChild(textnode);
+        //     if there's another level to the object, recursively call our function
+        //     this will create a new ul which we'll add after our text
+        if (typeof obj[key] === 'object') {
+            list.appendChild(renderJson(obj[key]));
+        } else {
+            textnode.textContent += ': ' + obj[key];
+        }
+        result.appendChild(list);
+    }
+    return result;
+}
 
 async function getFullDbMap() {
     try {
@@ -18,8 +32,8 @@ async function getFullDbMap() {
         const fullDbMapCall = firebase.functions().httpsCallable('get_full_db_map');
         const result = (await fullDbMapCall()).data;
         if (result.success === true) {
-            currentDBMap = result.dict;
-            $("#walker_result").html(renderjson(currentDBMap));
+            currentDBMap = sortObject(result.dict);
+            $("#walker_result").html(renderJson(currentDBMap));
         } else {
             alert(result.msg);
         }
@@ -44,7 +58,7 @@ async function saveFullDbMap() {
         })).data;
         if (result.success === true) {
             alert("hecho!");
-            $("#last_saved").html(renderjson(currentDBMap));
+            $("#last_saved").html(renderJson(currentDBMap));
             $("button").attr("disabled", false);
         } else {
             alert(result.msg);
@@ -68,7 +82,8 @@ $(async function () {
             if (result.body === null) {
                 $("#last_saved").html("Todavía no has guardado nada jeje");
             } else {
-                $("#last_saved").html(renderjson(result.body));
+                const orderedResult = sortObject(result.body);
+                $("#last_saved").html(renderJson(orderedResult));
             }
         } else {
             alert(result.msg);
