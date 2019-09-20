@@ -24,18 +24,26 @@ export async function getFullMap() {
             "slots",
             "spots",
             "statEvents",
+            "companies/57b2ORKV0Rw1u9Glnowh/customers",
             "companies/57b2ORKV0Rw1u9Glnowh/tactiles",
             "companies/57b2ORKV0Rw1u9Glnowh/touchScreenTemplates"
         ]
         const allowedToReadAllDocs = [  //- Estos son solo el nombrecito de la colección
-            "roles",
-            //"sessions",
-            //"users",
+            "apps",
+            "branchGroups",
             "branches",
+            //"companies",
+            "customers",
+            //"sessions",
             "lines",
             "printers",
+            "realtime",
+            "roles",
             "screens",
-            "slots"
+            "slotGroups",
+            "slots",
+            "touchScreens",
+            "users"
         ]
         const collections = await qantyDb.listCollections()
 
