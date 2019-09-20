@@ -1,0 +1,22 @@
+
+.missing {
+    color: gray;
+    text-decoration: line-through;
+}
+
+.extra {
+    background-color: #47e847;
+}
+
+.different {
+    background-color: chocolate;
+}
+
+#diff_toggle_div {
+    position: fixed;
+    margin-top: 5%;
+    width: 20em;
+    left: 50%;
+    margin-left: -5em;
+    z-index: 1;
+}
