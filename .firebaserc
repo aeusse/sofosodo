@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "sofosodo-dev"
+    "default": "sofosodo-dev",
+    "prod": "sofosodo-prod"
   }
 }
