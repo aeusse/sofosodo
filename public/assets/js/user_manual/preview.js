@@ -36,8 +36,8 @@ function drawSubItem(idx, currentPath, subItem) {
         currentPathText += (i + 1) + ".";
         indent += "&nbsp;&nbsp;&nbsp;";
     }
-    indexHtml += `<div class="index_item"><a href="#sub_item_${currentPathText}${idx}">${indent}${currentPathText}${(idx + 1)} &nbsp;&nbsp; ${subitem.titleTranslations[languagePreview]}</a></div>`;
-    fullHtml += `<div id="sub_item_${currentPathText}${idx}"><h4><center>${subitem.titleTranslations[languagePreview]}</center></h4></div>`;
+    indexHtml += `<div class="index_item"><a href="#sub_item_${currentPathText}${idx}">${indent}${currentPathText}${(idx + 1)} &nbsp;&nbsp; ${subItem.titleTranslations[languagePreview]}</a></div>`;
+    fullHtml += `<div id="sub_item_${currentPathText}${idx}"><h4><center>${currentPathText}${(idx + 1)} &nbsp;&nbsp; ${subItem.titleTranslations[languagePreview]}</center></h4></div>`;
     for (let idx in subItem.data) {
         const field = subItem.data[idx];
         if (field.finalUser === true) {
@@ -76,22 +76,24 @@ $(async function () {
     $("." + languagePreview).show();
     $("#manual_title").text(softwareName);
     $(".subtitle span").text(manualName);
+    let result = {};
     try {
         $("#loading_div").show();
         const getManualBodyCall = firebase.functions().httpsCallable('get_manual_body');
-        const result = (await getManualBodyCall({
+        result = (await getManualBodyCall({
             software_id: softwareId,
             manual_id: manualId
         })).data;
-        if (result.success === true) {
-            tree = JSON.parse(result.body);
-            drawInitialTree(tree);
-        } else {
-            alert(result.data.msg);
-        }
-        $("#loading_div").hide();
     } catch (error) {
         console.log(error);
         alert("No se pudo iniciar!!");
     }
+    if (result.success === true) {
+        tree = JSON.parse(result.body);
+        drawInitialTree(tree);
+    } else {
+        alert(result.data.msg);
+    }
+    $("#loading_div").hide();
+    
 });

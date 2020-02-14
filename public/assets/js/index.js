@@ -52,6 +52,15 @@ function goToTools(id, name) {
 $(async function () {
     try {
         $("button").attr("disabled", true);
+        try {
+            const authResult = await firebase.auth().signInWithEmailAndPassword("pruebas@pruebas.com", "PqmDTE7xUTr8PFGus6llEY4HxVz46GlTsJNAffru");
+        } catch (error) {
+            console.log("Fallo en la autenticación")
+            console.log(error);
+            return;
+        }
+        //- Si se desea cerrar sesión:
+        // firebase.auth().signOut();
         const getSoftwaresCall = firebase.functions().httpsCallable('get_softwares');
         const result = (await getSoftwaresCall()).data;
         if (result.success === true) {
