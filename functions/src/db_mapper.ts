@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 const db = admin.firestore()
 
-const qantyCredentials = require('../qanty-cert.json');
+const qantyCredentials = require('../credentials/qanty-cert.json');
 const qantyAppConfig = {
     credential: admin.credential.cert(qantyCredentials),
     databaseURL: "https://qanty-dev.firebaseio.com"

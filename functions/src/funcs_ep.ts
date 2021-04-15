@@ -89,6 +89,9 @@ nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 	const result = await userManualFuncs.save(data.software_id, data.manual_id, data.tree, data.checkpoint_tree)
 	return result
 })
+nativeFuncs.export_user_manuals = (async (session: any, data: any) => {
+	return await userManualFuncs.exportUserManuals(data.software_id)
+})
 
 //-
 //- DB Walker

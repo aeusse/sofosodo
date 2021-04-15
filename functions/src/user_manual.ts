@@ -120,3 +120,64 @@ export async function save(softwareId: string, manualId: string, treeToSave: any
         }
     }
 }
+
+export async function exportUserManuals(softwareId: string) {
+    try {
+        let qantyDb: any
+        const currentEnv = JSON.parse(process.env.FIREBASE_CONFIG || '')
+        if (currentEnv.projectId === "sofosodo-prod") {
+            return {
+                success: false,
+                code: "NOT_IMPLEMENTED",
+                msg: "Aún no vamos por allá en la implementación"
+            }
+        } else {
+            //- Si no es "sofosodo-prod", casi que no importa donde estemos y nos vamos a pegarle a dev
+            const qantyCredentials = require('../credentials/qanty-cert.json');
+            const qantyAppConfig = {
+                credential: admin.credential.cert(qantyCredentials),
+                databaseURL: "https://qanty-dev.firebaseio.com"
+            }
+            let found = false
+            for (const app of admin.apps) {
+                if (app?.name === "qantyForManuals") {
+                    found = true
+                    qantyDb = app.firestore()
+                    break
+                }
+            }
+            if (found === false) {
+                const adminQanty = admin.initializeApp(qantyAppConfig, "qantyForManuals")
+                qantyDb = adminQanty.firestore()
+            }
+        }
+        const implementedExports = (await db.collection("/softwares").doc(softwareId).get()).data()
+        if (implementedExports?.name !== "Qanty") {
+            return {
+                success: false,
+                code: "NOT_IMPLEMENTED",
+                msg: "Lo sentimos. Los manuales de ese software no se pueden exportar"
+            }
+        }
+        const get = await getUserManuals(softwareId)
+        if (get.success !== true) {
+            return get
+        }
+        const qantyBatch = qantyDb.batch();
+        for (const id in get.manuals) {
+            qantyBatch.set(qantyDb.collection("/manuals").doc(id), get.manuals[id])
+        }
+        await qantyBatch.commit();
+        return {
+            success: true
+        }
+
+    } catch (error) {
+        console.error("Error User manual exportUserManuals: " + error.stack)
+        return {
+            success: false,
+            code: "EXPORT_USER_MANUALS_INTERNAL_ERROR",
+            msg: "Error interno"
+        }
+    }
+}

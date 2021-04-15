@@ -1,4 +1,6 @@
 
+let magicWord = ''
+
 //- Firebase
 const firestore = firebase.firestore();
 firebase.functions()._url = function (name) {
@@ -47,6 +49,34 @@ function goToEditor(id, name) {
     localStorage.setItem("manual_id", id);
     localStorage.setItem("manual_name", name);
     window.location = "editor.html"
+}
+
+async function exportManual() {
+    if (confirm('¿Está seguro que desea publicar estos manuales?')) {
+        try {
+            if (magicWord !== "1XAQ2XOP8KS7ME9IA4JRASXZ33OE74L9") { //- Esto es un simple check para no irla a cagar
+                console.error("")
+                console.error(" * No dijiste la palabra mágica *")
+                console.error("")
+                return
+            }
+            console.log("¡Bien!. Exportando...")
+            $("button").attr("disabled", true);
+            $("#loading_div").show();
+            const exportCall = firebase.functions().httpsCallable('export_user_manuals');
+            const result = (await exportCall({ software_id: softwareId })).data;
+            if (result.success === true) {
+                alert("¡HECHO!");
+            } else {
+                alert(result.msg);
+            }
+            $("#loading_div").hide();
+            $("button").attr("disabled", false);
+        } catch (error) {
+            console.log(error);
+            alert("Error no manejado al exportar!!");
+        }
+    }
 }
 
 $(async function () {
