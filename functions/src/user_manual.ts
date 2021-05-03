@@ -1,5 +1,8 @@
 import * as admin from 'firebase-admin'
-
+import * as utils from './utils'
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 const db = admin.firestore()
 
 export async function getUserManuals(softwareId: string) {
@@ -124,6 +127,7 @@ export async function save(softwareId: string, manualId: string, treeToSave: any
 export async function exportUserManuals(softwareId: string) {
     try {
         let qantyDb: any
+        let bucketQanty: any
         const currentEnv = JSON.parse(process.env.FIREBASE_CONFIG || '')
         if (currentEnv.projectId === "sofosodo-prod") {
             return {
@@ -136,19 +140,22 @@ export async function exportUserManuals(softwareId: string) {
             const qantyCredentials = require('../credentials/qanty-cert.json');
             const qantyAppConfig = {
                 credential: admin.credential.cert(qantyCredentials),
-                databaseURL: "https://qanty-dev.firebaseio.com"
+                databaseURL: "https://qanty-dev.firebaseio.com",
+                storageBucket: ("qanty-dev.appspot.com")
             }
             let found = false
             for (const app of admin.apps) {
                 if (app?.name === "qantyForManuals") {
                     found = true
                     qantyDb = app.firestore()
+                    bucketQanty = app.storage().bucket();
                     break
                 }
             }
             if (found === false) {
                 const adminQanty = admin.initializeApp(qantyAppConfig, "qantyForManuals")
                 qantyDb = adminQanty.firestore()
+                bucketQanty = adminQanty.storage().bucket();
             }
         }
         const implementedExports = (await db.collection("/softwares").doc(softwareId).get()).data()
@@ -159,19 +166,13 @@ export async function exportUserManuals(softwareId: string) {
                 msg: "Lo sentimos. Los manuales de ese software no se pueden exportar"
             }
         }
-        const get = await getUserManuals(softwareId)
-        if (get.success !== true) {
-            return get
-        }
-        const qantyBatch = qantyDb.batch();
-        for (const id in get.manuals) {
-            qantyBatch.set(qantyDb.collection("/manuals").doc(id), get.manuals[id])
-        }
-        await qantyBatch.commit();
+        const ps = []
+        ps.push(exportStorage(bucketQanty))
+        ps.push(exportFirestore(qantyDb, softwareId))
+        await Promise.all(ps)
         return {
             success: true
         }
-
     } catch (error) {
         console.error("Error User manual exportUserManuals: " + error.stack)
         return {
@@ -180,4 +181,38 @@ export async function exportUserManuals(softwareId: string) {
             msg: "Error interno"
         }
     }
+}
+
+async function exportFirestore(qantyDb: any, softwareId: string) {
+    const get = await getUserManuals(softwareId)
+    if (get.success !== true) {
+        return false
+    }
+    const qantyBatch = qantyDb.batch();
+    for (const id in get.manuals) {
+        get.manuals[id].body = utils.replaceAll(get.manuals[id].body, "sofosodo-dev.appspot.com/o/", "qanty-dev.appspot.com/o/manuals%2F")
+        qantyBatch.set(qantyDb.collection("/manuals").doc(id), get.manuals[id])
+    }
+    await qantyBatch.commit();
+    return true
+}
+async function exportStorage(bucketQanty: any) {
+    const bucket = admin.storage().bucket();
+    const files = (await bucket.getFiles())[0]
+    const ps = []
+    for (const key in files) {
+        ps.push(exportSingleFile(bucket, bucketQanty, files[key]))
+    }
+    await Promise.all(ps)
+    return true
+}
+async function exportSingleFile(bucket: any, bucketQanty: any, file: any) {
+    const fileName = path.basename(file.name);
+    const tempFilePath = path.join(os.tmpdir(), fileName);
+    await bucket.file(file.name).download({ destination: tempFilePath });
+    await bucketQanty.upload(tempFilePath, {
+        destination: "manuals/" + file.name
+    });
+    // Once the file has been uploaded, delete the local file to free up disk space.
+    return fs.unlinkSync(tempFilePath);
 }

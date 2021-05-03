@@ -1,8 +1,8 @@
 
 //- Por ejemplo para hacer una búsqueda en la DB hay que hacer esta validación
-export function checkStringParam(paramName:string, p:any) {
-    let errorWordCode:string
-    let errorMsg:string
+export function checkStringParam(paramName: string, p: any) {
+    let errorWordCode: string
+    let errorMsg: string
     switch (paramName) {
         case "name": {
             errorWordCode = "NAME"
@@ -27,4 +27,8 @@ export function checkStringParam(paramName:string, p:any) {
     return {
         success: true
     }
+}
+
+export function replaceAll(str: string, find: string, replace: string) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }
