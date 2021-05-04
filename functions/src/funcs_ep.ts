@@ -5,6 +5,8 @@ import * as dbMapperFuncs from './db_mapper'
 import * as mainFuncs from './main'
 import * as utils from './utils'
 
+const magicWord = (require('../credentials/magic_word.json')).word
+
 //-
 //- Setups
 //-
@@ -90,7 +92,14 @@ nativeFuncs.save_user_manual = (async (session: any, data: any) => {
 	return result
 })
 nativeFuncs.export_user_manuals = (async (session: any, data: any) => {
-	return await userManualFuncs.exportUserManuals(data.software_id)
+	if (data.magicWord !== magicWord) {
+		return {
+			success: false,
+			code: "DENY",
+			msg: "No dijiste la palabra mágica"
+		}
+	}
+	return await userManualFuncs.exportUserManuals(data.softwareId)
 })
 
 //-

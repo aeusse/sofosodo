@@ -54,17 +54,13 @@ function goToEditor(id, name) {
 async function exportManual() {
     if (confirm('¿Está seguro que desea publicar estos manuales?')) {
         try {
-            if (magicWord !== "1XAQ2XOP8KS7ME9IA4JRASXZ33OE74L9") { //- Esto es un simple check para no irla a cagar
-                console.error("")
-                console.error(" * No dijiste la palabra mágica *")
-                console.error("")
-                return
-            }
-            console.log("¡Bien!. Exportando...")
             $("button").attr("disabled", true);
             $("#loading_div").show();
             const exportCall = firebase.functions().httpsCallable('export_user_manuals');
-            const result = (await exportCall({ software_id: softwareId })).data;
+            const result = (await exportCall({
+                softwareId,
+                magicWord
+            })).data;
             if (result.success === true) {
                 alert("¡HECHO!");
             } else {
