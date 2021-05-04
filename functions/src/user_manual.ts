@@ -5,6 +5,8 @@ const os = require('os');
 const fs = require('fs');
 const db = admin.firestore()
 
+const currentEnv = JSON.parse(process.env.FIREBASE_CONFIG || '')
+
 export async function getUserManuals(softwareId: string) {
     try {
         const docs = (await db.collection("/softwares").doc(softwareId)
@@ -128,35 +130,31 @@ export async function exportUserManuals(softwareId: string) {
     try {
         let qantyDb: any
         let bucketQanty: any
-        const currentEnv = JSON.parse(process.env.FIREBASE_CONFIG || '')
+        let target = "qanty-dev"
+        let cert = "qanty-cert"
         if (currentEnv.projectId === "sofosodo-prod") {
-            return {
-                success: false,
-                code: "NOT_IMPLEMENTED",
-                msg: "Aún no vamos por allá en la implementación"
+            target = "qanty-prod"
+            cert = "qanty-cert-prod"
+        }
+        const qantyCredentials = require('../credentials/' + cert + '.json');
+        const qantyAppConfig = {
+            credential: admin.credential.cert(qantyCredentials),
+            databaseURL: "https://" + target + ".firebaseio.com",
+            storageBucket: (target + ".appspot.com")
+        }
+        let found = false
+        for (const app of admin.apps) {
+            if (app?.name === "qantyForManuals") {
+                found = true
+                qantyDb = app.firestore()
+                bucketQanty = app.storage().bucket();
+                break
             }
-        } else {
-            //- Si no es "sofosodo-prod", casi que no importa donde estemos y nos vamos a pegarle a dev
-            const qantyCredentials = require('../credentials/qanty-cert.json');
-            const qantyAppConfig = {
-                credential: admin.credential.cert(qantyCredentials),
-                databaseURL: "https://qanty-dev.firebaseio.com",
-                storageBucket: ("qanty-dev.appspot.com")
-            }
-            let found = false
-            for (const app of admin.apps) {
-                if (app?.name === "qantyForManuals") {
-                    found = true
-                    qantyDb = app.firestore()
-                    bucketQanty = app.storage().bucket();
-                    break
-                }
-            }
-            if (found === false) {
-                const adminQanty = admin.initializeApp(qantyAppConfig, "qantyForManuals")
-                qantyDb = adminQanty.firestore()
-                bucketQanty = adminQanty.storage().bucket();
-            }
+        }
+        if (found === false) {
+            const adminQanty = admin.initializeApp(qantyAppConfig, "qantyForManuals")
+            qantyDb = adminQanty.firestore()
+            bucketQanty = adminQanty.storage().bucket();
         }
         const implementedExports = (await db.collection("/softwares").doc(softwareId).get()).data()
         if (implementedExports?.name !== "Qanty") {
@@ -189,8 +187,12 @@ async function exportFirestore(qantyDb: any, softwareId: string) {
         return false
     }
     const qantyBatch = qantyDb.batch();
+    let replacement = "qanty-dev.appspot.com/o/manuals%2F"
+    if (currentEnv.projectId === "sofosodo-prod") {
+        replacement = "qanty-prod.appspot.com/o/manuals%2F"
+    }
     for (const id in get.manuals) {
-        get.manuals[id].body = utils.replaceAll(get.manuals[id].body, "sofosodo-dev.appspot.com/o/", "qanty-dev.appspot.com/o/manuals%2F")
+        get.manuals[id].body = utils.replaceAll(get.manuals[id].body, "sofosodo-dev.appspot.com/o/", replacement)
         qantyBatch.set(qantyDb.collection("/manuals").doc(id), get.manuals[id])
     }
     await qantyBatch.commit();
