@@ -70,7 +70,7 @@ function addParagraph(idx, initialField) {
     const innerHtml = `<div class="container-fluid">
         <div class="row">
           <div class="col-4">
-            <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();">
+            <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();" checked>
             <label class="where_to_show_checks"> Usuario final</label>
           </div>
           <div class="col-5">
@@ -106,8 +106,8 @@ function addParagraph(idx, initialField) {
     if (initialField && initialField.type === "text"){
         $(`#textarea_${idx}`).val(initialField.text)
         $(`#language_select_${idx}`).val(initialField.language)
-        if (initialField.finalUser === true){
-            $(`#where_to_show_checkbox_${idx}`).prop('checked', true);
+        if (initialField.finalUser === false){
+            $(`#where_to_show_checkbox_${idx}`).prop('checked', false);
         }
     }
     refreshBlurListeners();
@@ -116,7 +116,7 @@ function addImage(idx, initialField) {
     const innerHtml = `<div class="container-fluid">
         <div class="row">
           <div class="col-4">
-            <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();">
+            <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();" checked>
             <label class="where_to_show_checks"> Usuario final</label>
           </div>
         </div>
@@ -163,8 +163,8 @@ function addImage(idx, initialField) {
         $(`#content_${idx} div.uploadedImageDivs`).empty();
         $(`#content_${idx} div.uploadedImageDivs`).prepend(`<img src="${initialField.url}" />`);
         $(`#content_${idx} div.uploadedImageDivs`).data("img_url", initialField.url);
-        if (initialField.finalUser === true){
-            $(`#where_to_show_checkbox_${idx}`).prop('checked', true);
+        if (initialField.finalUser === false){
+            $(`#where_to_show_checkbox_${idx}`).prop('checked', false);
         }
     }
     refreshEnteredData();
