@@ -20,9 +20,9 @@ function editItem(path) {
     for (let idx in targetObject.data){
         const initialField = targetObject.data[idx];
         if (initialField.type === "text"){
-            addParagraph(parseInt(idx), initialField);
+            addParagraph(parseInt(idx), initialField, path);
         }else{
-            addImage(parseInt(idx), initialField);
+            addImage(parseInt(idx), initialField, path);
         }
     }
     $("#tree_container").hide();
@@ -66,7 +66,7 @@ function refreshBlurListeners(){
     });
     refreshEnteredData();
 }
-function addParagraph(idx, initialField) {
+function addParagraph(idx, initialField, path) {
     const innerHtml = `<div class="container-fluid">
         <div class="row">
           <div class="col-4">
@@ -79,6 +79,9 @@ function addParagraph(idx, initialField) {
               <option value="english">Inglés</option>
               <option value="portuguese">Portugués</option>
             </select>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-sm btn-danger" onclick="deleteItem(${idx}, ${path});">Eliminar</button>
           </div>
         </div>
         <div class="row">
@@ -112,12 +115,15 @@ function addParagraph(idx, initialField) {
     }
     refreshBlurListeners();
 }
-function addImage(idx, initialField) {
+function addImage(idx, initialField, path) {
     const innerHtml = `<div class="container-fluid">
         <div class="row">
-          <div class="col-4">
+          <div class="col-9">
             <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();" checked>
             <label class="where_to_show_checks"> Usuario final</label>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-sm btn-danger" onclick="deleteItem(${idx}, ${path});">Eliminar</button>
           </div>
         </div>
         <div class="row">
@@ -170,6 +176,17 @@ function addImage(idx, initialField) {
     refreshEnteredData();
 }
 
+function deleteItem(idx, ...path){
+  if (window.confirm("¿Estás segur@ de que quieres eliminar este ítem?")) {
+    refreshEnteredData()
+    let modifiedDataArray = Object.values(modifiedData)
+    modifiedDataArray.splice(idx, 1)
+    modifiedData = Object.fromEntries(modifiedDataArray.entries())
+    updateTree(path)
+    editItem(path)
+  }
+}
+
 function refreshEnteredData(){
     let finalViewHtml = "";
     const elements = $(".contents");
@@ -202,23 +219,25 @@ function refreshEnteredData(){
 }
 
 function saveToLocalStorage(path){
-    refreshEnteredData();
+  refreshEnteredData();
+  updateTree(path)
+  $("#item_edition_title").hide();
+  $("#item_edition_body").hide();
+  $("#tree_container").show();
+}
 
-    let o = tree;
-    for (let i = 0; i < path.length - 1; i++) {
-        let n = path[i];
-        o = o[n].children;
-    }
-    const closerParentIdx = path[path.length - 1];
-    const target = o[closerParentIdx];
+function updateTree(path){
+  let o = tree;
+  for (let i = 0; i < path.length - 1; i++) {
+    let n = path[i];
+    o = o[n].children;
+  }
+  const closerParentIdx = path[path.length - 1];
+  const target = o[closerParentIdx];
 
-    if ((target.data === undefined && JSON.stringify(modifiedData) !== "{}") || (target.data !== undefined && (JSON.stringify(target.data) !== JSON.stringify(modifiedData)))){
-        target.data = modifiedData;
-        localStorage.setItem("tree", JSON.stringify(tree));
-        localStorage.setItem("need_to_save", "true");
-    }
-
-    $("#item_edition_title").hide();
-    $("#item_edition_body").hide();
-    $("#tree_container").show();
+  if ((target.data === undefined && JSON.stringify(modifiedData) !== "{}") || (target.data !== undefined && (JSON.stringify(target.data) !== JSON.stringify(modifiedData)))){
+    target.data = modifiedData;
+    localStorage.setItem("tree", JSON.stringify(tree));
+    localStorage.setItem("need_to_save", "true");
+  }
 }
