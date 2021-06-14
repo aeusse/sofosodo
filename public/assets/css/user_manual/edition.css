@@ -43,6 +43,10 @@ li{
     margin-top: 17px;
 }
 
+.liSpan {
+    cursor: pointer;
+}
+
 .custom-file{
     font-size: 13px;
 }

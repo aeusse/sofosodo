@@ -64,9 +64,10 @@ function appendItem() {
         children: []
     }
     $("#root_ul").append(`<li>
-        <span id="li_title_${curRootLi}" class="font-weight-bold" onclick="editItem([${curRootLi}]);">${curRootLi + 1} &nbsp;&nbsp; ${titles.txts.spanish}</span>
-        <button class="liButtons" onclick="editTitle([${curRootLi}]);">Editar título</button>
-        <button class="liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
+        <span id="li_title_${curRootLi}" class="font-weight-bold liSpan" onclick="editItem([${curRootLi}]);">${curRootLi + 1} &nbsp;&nbsp; ${titles.txts.spanish}</span>
+        <button class="btn btn-outline-dark liButtons" onclick="editTitle([${curRootLi}]);">Editar título</button>
+        <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${curRootLi}])">Eliminar ítem</button>
+        <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
         <ul id="sub_ul_${curRootLi}"></ul>
     </li>`);
     localStorage.setItem("tree", JSON.stringify(tree));
@@ -102,9 +103,10 @@ function appendSubItem(parentPath) {
         parentPathText += (parseInt(i) + 1) + ".";
     }
     $("#sub_ul" + parentSubUlIdPath).append(`<li>
-        <span id="li_title${nextSubUlIdPath}" onclick="editItem([${nextPath}]);">${parentPathText.slice(0, -1)} &nbsp;&nbsp; ${titles.txts.spanish}</span>
-        <button class="liButtons" onclick="editTitle([${nextPath}]);">Editar título</button>
-        <button class="liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
+        <span id="li_title${nextSubUlIdPath}" class="liSpan" onclick="editItem([${nextPath}]);">${parentPathText.slice(0, -1)} &nbsp;&nbsp; ${titles.txts.spanish}</span>
+        <button class="btn btn-outline-dark liButtons" onclick="editTitle([${nextPath}]);">Editar título</button>
+        <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${nextPath}])">Eliminar ítem</button>
+        <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
         <ul id="sub_ul${nextSubUlIdPath}"></ul>
     </li>`);
     localStorage.setItem("tree", JSON.stringify(tree));
@@ -131,6 +133,30 @@ function editTitle(path) {
     $("#li_title_" + parentPathIdSufix).html(parentPathText + " &nbsp;&nbsp; " + titles.txts.spanish)
     o[target].title = titles.txts.spanish
     o[target].titleTranslations = titles.txts
+}
+
+function removeOuterItem(path) {
+    const msg = "Se eliminará todo el contenido interno\n¿Estás segur@ de que quieres eliminar este ítem?"
+    if (window.confirm(msg)) {
+        let o = tree
+        for (let i = 0; i < path.length - 1; i++) {
+            let n = path[i]
+            o = o[n].children           
+        }
+        const target = path[path.length - 1]
+        if (path.length === 1) {
+            let modifiedDataArray = Object.values(o)
+            modifiedDataArray.splice(target, 1)
+            tree = Object.fromEntries(modifiedDataArray.entries())
+        } else {
+            o.splice(target, 1)
+        }        
+        localStorage.setItem("tree", JSON.stringify(tree))
+        localStorage.setItem("need_to_save", "true")
+        curRootLi = -1
+        $('#root_ul').empty()
+        drawInitialTree(tree)
+    }
 }
 
 async function save() {

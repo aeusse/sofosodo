@@ -32,6 +32,7 @@ function editItem(path) {
     <b>${targetObject.titleTranslations.spanish}</b>
     (${targetObject.titleTranslations.english}) (${targetObject.titleTranslations.portuguese})
     `);
+    $("#item_edition_title").addClass("liSpan")
     $('#item_edition_title').off('click');
     $("#item_edition_title").click( function(){
         saveToLocalStorage(path);
@@ -81,7 +82,7 @@ function addParagraph(idx, initialField, path) {
             </select>
           </div>
           <div class="col-3">
-            <button class="btn btn-sm btn-danger" onclick="deleteItem(${idx}, ${path});">Eliminar</button>
+            <button class="btn btn-sm btn-danger" onclick="removeInnerItem(${idx}, ${path});">Eliminar</button>
           </div>
         </div>
         <div class="row">
@@ -123,7 +124,7 @@ function addImage(idx, initialField, path) {
             <label class="where_to_show_checks"> Usuario final</label>
           </div>
           <div class="col-3">
-            <button class="btn btn-sm btn-danger" onclick="deleteItem(${idx}, ${path});">Eliminar</button>
+            <button class="btn btn-sm btn-danger" onclick="removeInnerItem(${idx}, ${path});">Eliminar</button>
           </div>
         </div>
         <div class="row">
@@ -176,7 +177,7 @@ function addImage(idx, initialField, path) {
     refreshEnteredData();
 }
 
-function deleteItem(idx, ...path){
+function removeInnerItem(idx, ...path){
   if (window.confirm("¿Estás segur@ de que quieres eliminar este ítem?")) {
     refreshEnteredData()
     let modifiedDataArray = Object.values(modifiedData)
