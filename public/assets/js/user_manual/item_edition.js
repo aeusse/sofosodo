@@ -2,8 +2,10 @@ const storageService = firebase.storage();
 const storageRef = storageService.ref();
 
 let modifiedData = {};
+let currentPath = []
 
 function editItem(path) {
+    currentPath = path
     $('#final_user_viewer').empty();
     $('.contents').remove();
 
@@ -20,9 +22,9 @@ function editItem(path) {
     for (let idx in targetObject.data){
         const initialField = targetObject.data[idx];
         if (initialField.type === "text"){
-            addParagraph(parseInt(idx), initialField, path);
+            addParagraph(parseInt(idx), initialField);
         }else{
-            addImage(parseInt(idx), initialField, path);
+            addImage(parseInt(idx), initialField);
         }
     }
     $("#tree_container").hide();
@@ -32,7 +34,7 @@ function editItem(path) {
     <b>${targetObject.titleTranslations.spanish}</b>
     (${targetObject.titleTranslations.english}) (${targetObject.titleTranslations.portuguese})
     `);
-    $("#item_edition_title").addClass("liSpan")
+    $("#item_edition_title").addClass("pointer")
     $('#item_edition_title').off('click');
     $("#item_edition_title").click( function(){
         saveToLocalStorage(path);
@@ -67,22 +69,26 @@ function refreshBlurListeners(){
     });
     refreshEnteredData();
 }
-function addParagraph(idx, initialField, path) {
+function addParagraph(idx, initialField) {
     const innerHtml = `<div class="container-fluid">
         <div class="row">
-          <div class="col-4">
+          <div class="col-3">
             <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();" checked>
             <label class="where_to_show_checks"> Usuario final</label>
           </div>
-          <div class="col-5">
+          <div class="col-4">
             <select id="language_select_${idx}" class="language_selects blur_trigger custom-select">
               <option value="spanish">Español</option>
               <option value="english">Inglés</option>
               <option value="portuguese">Portugués</option>
             </select>
           </div>
+          <div class="col-2">
+            <button class="btn btn-sm btn-danger" onclick="removeInnerItem(${idx});">Eliminar</button>
+          </div>
           <div class="col-3">
-            <button class="btn btn-sm btn-danger" onclick="removeInnerItem(${idx}, ${path});">Eliminar</button>
+            <i class="fas fa-caret-square-up fa-2x pointer" onclick="goUpInner(${idx})"></i>
+            <i class="fas fa-caret-square-down fa-2x pointer" onclick="goDownInner(${idx})"></i>
           </div>
         </div>
         <div class="row">
@@ -116,15 +122,19 @@ function addParagraph(idx, initialField, path) {
     }
     refreshBlurListeners();
 }
-function addImage(idx, initialField, path) {
+function addImage(idx, initialField) {
     const innerHtml = `<div class="container-fluid">
         <div class="row">
-          <div class="col-9">
+          <div class="col-7">
             <input id="where_to_show_checkbox_${idx}" type="checkbox" name="where_to_show" value="final" onclick="refreshEnteredData();" checked>
             <label class="where_to_show_checks"> Usuario final</label>
           </div>
+          <div class="col-2">
+            <button class="btn btn-sm btn-danger" onclick="removeInnerItem(${idx});">Eliminar</button>
+          </div>
           <div class="col-3">
-            <button class="btn btn-sm btn-danger" onclick="removeInnerItem(${idx}, ${path});">Eliminar</button>
+            <i class="fas fa-caret-square-up fa-2x pointer" onclick="goUpInner(${idx})"></i>
+            <i class="fas fa-caret-square-down fa-2x pointer" onclick="goDownInner(${idx})"></i>
           </div>
         </div>
         <div class="row">
@@ -177,15 +187,39 @@ function addImage(idx, initialField, path) {
     refreshEnteredData();
 }
 
-function removeInnerItem(idx, ...path){
+function removeInnerItem(idx){
   if (window.confirm("¿Estás segur@ de que quieres eliminar este ítem?")) {
     refreshEnteredData()
     let modifiedDataArray = Object.values(modifiedData)
     modifiedDataArray.splice(idx, 1)
     modifiedData = Object.fromEntries(modifiedDataArray.entries())
-    updateTree(path)
-    editItem(path)
+    updateTree(currentPath)
+    editItem(currentPath)
   }
+}
+
+function goUpInner(idx){
+  if (idx === 0 ) {
+    return
+  }
+  let topPosition = modifiedData[idx - 1]
+  let currentPos = modifiedData[idx]
+  modifiedData[idx - 1] = currentPos
+  modifiedData[idx] = topPosition
+  updateTree(currentPath)
+  editItem(currentPath)
+}
+
+function goDownInner(idx){
+  if (idx === Object.keys(modifiedData).length - 1) {
+    return
+  }
+  let downPosition = modifiedData[idx + 1]
+  let currentPos = modifiedData[idx]
+  modifiedData[idx + 1] = currentPos
+  modifiedData[idx] = downPosition
+  updateTree(currentPath)
+  editItem(currentPath)
 }
 
 function refreshEnteredData(){
@@ -235,7 +269,7 @@ function updateTree(path){
   }
   const closerParentIdx = path[path.length - 1];
   const target = o[closerParentIdx];
-
+  
   if ((target.data === undefined && JSON.stringify(modifiedData) !== "{}") || (target.data !== undefined && (JSON.stringify(target.data) !== JSON.stringify(modifiedData)))){
     target.data = modifiedData;
     localStorage.setItem("tree", JSON.stringify(tree));

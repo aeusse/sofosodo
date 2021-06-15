@@ -64,7 +64,7 @@ function appendItem() {
         children: []
     }
     $("#root_ul").append(`<li>
-        <span id="li_title_${curRootLi}" class="font-weight-bold liSpan" onclick="editItem([${curRootLi}]);">${curRootLi + 1} &nbsp;&nbsp; ${titles.txts.spanish}</span>
+        <span id="li_title_${curRootLi}" class="font-weight-bold pointer" onclick="editItem([${curRootLi}]);">${curRootLi + 1} &nbsp;&nbsp; ${titles.txts.spanish}</span>
         <button class="btn btn-outline-dark liButtons" onclick="editTitle([${curRootLi}]);">Editar título</button>
         <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${curRootLi}])">Eliminar ítem</button>
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
@@ -103,7 +103,7 @@ function appendSubItem(parentPath) {
         parentPathText += (parseInt(i) + 1) + ".";
     }
     $("#sub_ul" + parentSubUlIdPath).append(`<li>
-        <span id="li_title${nextSubUlIdPath}" class="liSpan" onclick="editItem([${nextPath}]);">${parentPathText.slice(0, -1)} &nbsp;&nbsp; ${titles.txts.spanish}</span>
+        <span id="li_title${nextSubUlIdPath}" class="pointer" onclick="editItem([${nextPath}]);">${parentPathText.slice(0, -1)} &nbsp;&nbsp; ${titles.txts.spanish}</span>
         <button class="btn btn-outline-dark liButtons" onclick="editTitle([${nextPath}]);">Editar título</button>
         <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${nextPath}])">Eliminar ítem</button>
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
