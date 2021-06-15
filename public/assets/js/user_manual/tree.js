@@ -68,6 +68,8 @@ function appendItem() {
         <button class="btn btn-outline-dark liButtons" onclick="editTitle([${curRootLi}]);">Editar título</button>
         <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${curRootLi}])">Eliminar ítem</button>
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
+        <i class="far fa-caret-square-up fa-lg pointer mx-2" onclick="goUpOuter([${curRootLi}])"></i>
+        <i class="far fa-caret-square-down fa-lg pointer" onclick="goDownOuter([${curRootLi}])"></i>
         <ul id="sub_ul_${curRootLi}"></ul>
     </li>`);
     localStorage.setItem("tree", JSON.stringify(tree));
@@ -107,6 +109,8 @@ function appendSubItem(parentPath) {
         <button class="btn btn-outline-dark liButtons" onclick="editTitle([${nextPath}]);">Editar título</button>
         <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${nextPath}])">Eliminar ítem</button>
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
+        <i class="far fa-caret-square-up fa-lg pointer mx-2" onclick="goUpOuter([${nextPath}])"></i>
+        <i class="far fa-caret-square-down fa-lg pointer" onclick="goDownOuter([${nextPath}])"></i>
         <ul id="sub_ul${nextSubUlIdPath}"></ul>
     </li>`);
     localStorage.setItem("tree", JSON.stringify(tree));
@@ -157,6 +161,48 @@ function removeOuterItem(path) {
         $('#root_ul').empty()
         drawInitialTree(tree)
     }
+}
+
+function goUpOuter(path) {
+    const target = path[path.length - 1]
+    if (target === 0) {
+        return
+    }
+    let o = tree
+    for (let i = 0; i < path.length - 1; i++) {
+        let n = path[i]
+        o = o[n].children           
+    }
+    const topPosition = o[target - 1]
+    const currentPos = o[target]
+    o[target - 1] = currentPos
+    o[target] = topPosition
+    localStorage.setItem("tree", JSON.stringify(tree))
+    localStorage.setItem("need_to_save", "true")
+    curRootLi = -1
+    $('#root_ul').empty()
+    drawInitialTree(tree)
+}
+
+function goDownOuter(path) {
+    let o = tree
+    for (let i = 0; i < path.length - 1; i++) {
+        let n = path[i]
+        o = o[n].children           
+    }
+    const target = path[path.length - 1]
+    if (target === (Object.keys(o).length - 1)) {
+       return 
+    }
+    const downPosition = o[target + 1]
+    const currentPos = o[target]
+    o[target + 1] = currentPos
+    o[target] = downPosition
+    localStorage.setItem("tree", JSON.stringify(tree))
+    localStorage.setItem("need_to_save", "true")
+    curRootLi = -1
+    $('#root_ul').empty()
+    drawInitialTree(tree)
 }
 
 async function save() {

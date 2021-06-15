@@ -6,6 +6,8 @@ function drawItem(titleTxt){
         <button class="btn btn-outline-dark liButtons" onclick="editTitle([${curRootLi}]);">Editar título</button>
         <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${curRootLi}])">Eliminar ítem</button>
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
+        <i class="far fa-caret-square-up fa-lg pointer mx-2" onclick="goUpOuter([${curRootLi}])"></i>
+        <i class="far fa-caret-square-down fa-lg pointer" onclick="goDownOuter([${curRootLi}])"></i>
         <ul id="sub_ul_${curRootLi}"></ul>
     </li>`);
 }
@@ -22,6 +24,8 @@ function drawSubItem(parentPath, titleTxt, parentSubUlIdPath, curSubLiIdx){
         <button class="btn btn-outline-dark liButtons" onclick="editTitle([${nextPath}]);">Editar título</button>
         <button class="btn btn-outline-danger liButtons" onclick="removeOuterItem([${nextPath}])">Eliminar ítem</button>
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
+        <i class="far fa-caret-square-up fa-lg pointer mx-2" onclick="goUpOuter([${nextPath}])"></i>
+        <i class="far fa-caret-square-down fa-lg pointer" onclick="goDownOuter([${nextPath}])"></i>
         <ul id="sub_ul${nextSubUlIdPath}"></ul>
     </li>`);
 }

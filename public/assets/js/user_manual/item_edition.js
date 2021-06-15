@@ -202,8 +202,8 @@ function goUpInner(idx){
   if (idx === 0 ) {
     return
   }
-  let topPosition = modifiedData[idx - 1]
-  let currentPos = modifiedData[idx]
+  const topPosition = modifiedData[idx - 1]
+  const currentPos = modifiedData[idx]
   modifiedData[idx - 1] = currentPos
   modifiedData[idx] = topPosition
   updateTree(currentPath)
@@ -214,8 +214,8 @@ function goDownInner(idx){
   if (idx === Object.keys(modifiedData).length - 1) {
     return
   }
-  let downPosition = modifiedData[idx + 1]
-  let currentPos = modifiedData[idx]
+  const downPosition = modifiedData[idx + 1]
+  const currentPos = modifiedData[idx]
   modifiedData[idx + 1] = currentPos
   modifiedData[idx] = downPosition
   updateTree(currentPath)
