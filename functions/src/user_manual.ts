@@ -82,9 +82,9 @@ export async function createNewManual(name: string, softwareId: string) {
 
 export async function save(softwareId: string, manualId: string, treeToSave: any, checkpointTree: any) {
     try {
+        const docRef = db.collection("/softwares").doc(softwareId)
+            .collection("manuals").doc(manualId)
         const transResult = await db.runTransaction(async transaction => {
-            const docRef = db.collection("/softwares").doc(softwareId)
-                .collection("manuals").doc(manualId)
             const softwareInfo = (await transaction.get(docRef)).data()
 
             if (softwareInfo && softwareInfo.body !== undefined) {
@@ -105,6 +105,9 @@ export async function save(softwareId: string, manualId: string, treeToSave: any
         })
 
         if (transResult.success === true) {
+            if (treeToSave !== checkpointTree) {
+                docRef.collection("changeHistory").add({ issueDate: Date.now(), body: treeToSave })
+            }
             return {
                 success: true
             }
