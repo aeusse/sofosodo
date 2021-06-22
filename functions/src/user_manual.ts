@@ -106,7 +106,7 @@ export async function save(softwareId: string, manualId: string, treeToSave: any
 
         if (transResult.success === true) {
             if (treeToSave !== checkpointTree) {
-                docRef.collection("changeHistory").add({ issueDate: Date.now(), body: treeToSave })
+                await docRef.collection("modificationHistory").add({ issueDate: Date.now(), body: treeToSave })
             }
             return {
                 success: true
