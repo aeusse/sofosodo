@@ -58,9 +58,13 @@ function appendItem() {
         return
     }
     curRootLi += 1;
+    let slug = titles.txts.spanish;
+    slug = slug.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    slug = slug.replace(/\s/g, ' ').split(' ').join('-')
     tree[curRootLi] = {
         title: titles.txts.spanish,
         titleTranslations: titles.txts,
+        slug: slug,
         children: []
     }
     $("#root_ul").append(`<li>
@@ -70,6 +74,7 @@ function appendItem() {
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${curRootLi}]);">Agregar subitem</button>
         <i class="far fa-caret-square-up fa-lg pointer mx-2" onclick="goUpOuter([${curRootLi}])"></i>
         <i class="far fa-caret-square-down fa-lg pointer" onclick="goDownOuter([${curRootLi}])"></i>
+        <p id="p_slug${curRootLi}">SLUG: ${slug}</p>
         <ul id="sub_ul_${curRootLi}"></ul>
     </li>`);
     localStorage.setItem("tree", JSON.stringify(tree));
@@ -92,8 +97,14 @@ function appendSubItem(parentPath) {
     const curSubLiIdx = o[closerParentIdx].children.length;
     parentSubUlIdPath += "_" + closerParentIdx;
 
+    let slug = titles.txts.spanish;
+    slug = slug.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    slug = slug.replace(/\s/g, ' ').split(' ').join('-')
+    slug = o[closerParentIdx].slug + "-" + slug
+
     o[closerParentIdx].children.push({
         title: titles.txts.spanish,
+        slug: slug,
         titleTranslations: titles.txts,
         children: []
     })
@@ -111,6 +122,7 @@ function appendSubItem(parentPath) {
         <button class="btn btn-outline-dark liButtons" onclick="appendSubItem([${nextPath}]);">Agregar subitem</button>
         <i class="far fa-caret-square-up fa-lg pointer mx-2" onclick="goUpOuter([${nextPath}])"></i>
         <i class="far fa-caret-square-down fa-lg pointer" onclick="goDownOuter([${nextPath}])"></i>
+        <p id="p_slug${nextSubUlIdPath}">SLUG: ${slug}</p>
         <ul id="sub_ul${nextSubUlIdPath}"></ul>
     </li>`);
     localStorage.setItem("tree", JSON.stringify(tree));
@@ -121,8 +133,10 @@ function editTitle(path) {
     let o = tree;
     let parentPathText = "";
     let parentPathIdSufix = "";
+    let slug
     for (let i = 0; i < path.length - 1; i++) {
         let n = path[i];
+        slug = o[n].slug
         o = o[n].children;
         parentPathIdSufix += n + "_";
         parentPathText += (parseInt(n) + 1) + ".";
@@ -135,6 +149,16 @@ function editTitle(path) {
         return
     }
     $("#li_title_" + parentPathIdSufix).html(parentPathText + " &nbsp;&nbsp; " + titles.txts.spanish)
+    var slug2 = titles.txts.spanish;
+    slug2 = slug2.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    slug2 = slug2.replace(/\s/g, ' ').split(' ').join('-')
+    if (slug !== undefined) {
+        slug = slug + "-" + slug2
+    } else {
+        slug = slug2
+    }
+    $("#p_slug_" + parentPathIdSufix).html("SLUG: " + slug)
+    o[target].slug = slug
     o[target].title = titles.txts.spanish
     o[target].titleTranslations = titles.txts
 }
@@ -145,7 +169,7 @@ function removeOuterItem(path) {
         let o = tree
         for (let i = 0; i < path.length - 1; i++) {
             let n = path[i]
-            o = o[n].children           
+            o = o[n].children
         }
         const target = path[path.length - 1]
         if (path.length === 1) {
@@ -154,7 +178,7 @@ function removeOuterItem(path) {
             tree = Object.fromEntries(modifiedDataArray.entries())
         } else {
             o.splice(target, 1)
-        }        
+        }
         localStorage.setItem("tree", JSON.stringify(tree))
         localStorage.setItem("need_to_save", "true")
         curRootLi = -1
@@ -171,7 +195,7 @@ function goUpOuter(path) {
     let o = tree
     for (let i = 0; i < path.length - 1; i++) {
         let n = path[i]
-        o = o[n].children           
+        o = o[n].children
     }
     const topPosition = o[target - 1]
     const currentPos = o[target]
@@ -188,11 +212,11 @@ function goDownOuter(path) {
     let o = tree
     for (let i = 0; i < path.length - 1; i++) {
         let n = path[i]
-        o = o[n].children           
+        o = o[n].children
     }
     const target = path[path.length - 1]
     if (target === (Object.keys(o).length - 1)) {
-       return 
+        return
     }
     const downPosition = o[target + 1]
     const currentPos = o[target]
